@@ -1,11 +1,9 @@
 ## load libraries
 require(plyr)
 
-
 ## This function compute amino acid sequence AAindex property given an accession code.
-computeAAindexValue <- function(seq, accession){
-    
-   loadAAindex()
+computeAAindexValueByAccession <- function(seq, accession){
+  
       if (!accession %in% names(aaindex)){
          stop("Not valid accession code...")
       }
@@ -13,7 +11,7 @@ computeAAindexValue <- function(seq, accession){
   
      sequence <- toupper(seq)
      sequence <- reformatSequence(seq = sequence)
-     lev <- c("A",  "L",  "R", "K", "N", "M", "D", "F", "C", "P", "Q", "S", "E", "T", "G", "W", "H", "Y", "I", "V")
+     lev <- c("A","R","N","D","C","Q","E","G","H","I","L","K","M","F","P","S","T","W","Y","V")
      seqTable <- table(factor(prot <- strsplit(sequence, "")[[1]], levels = lev))
   
      temp <- seqTable*aaindexTable
@@ -26,17 +24,24 @@ computeAAindexValue <- function(seq, accession){
 ## This function compute all AAindex values given a sequence
 
 computeAllAAindexValues <- function(seq){
-           loadAAindex()
-           acc.list <- names(aaindex)
-           aaindex.vector <- lapply(acc.list, function(x) computeAAindexValue(seq, x))
-           return(aaindex.vector)
+   #loadAAindex()
+      sequence <- toupper(seq)
+      sequence <- reformatSequence(seq = sequence)
+      lev <- c("A","R","N","D","C","Q","E","G","H","I","L","K","M","F","P","S","T","W","Y","V")
+      seqTable <- table(factor(naa <- strsplit(sequence, "")[[1]], levels = lev))
+      # AAindex matrix
+      M <- aaindexMatrix
+      # sequence vector
+      P <- as.vector(seqTable)
+      
+      features <- M %*% P
+      features <- features*(1/length(naa))     
+   return(features)
 }
 
 
 ## Retrieving AAindex table from accesion code
 getAAindexTable <- function(accession){
-  #load AAindex data
-  loadAAindex()
   #retrive table using acc code
   aaindexTable <- as.table(aaindex[[accession]]$I)
   names(aaindexTable) <- mapAA(names(aaindexTable))
@@ -44,74 +49,34 @@ getAAindexTable <- function(accession){
 }
 
 
-## renaming amino acid from 3-letter to 1-letter code
-
-mapAA <- function(seqvec){
-  seqvec <- revalue(seqvec, c("Ala"="A", "Arg"="R", "Asn"="N", "Asp"="D", "Cys"="C", 
-                              "Gln"="Q", "Glu"="E", "Gly"="G", "His"="H", "Ile"="I", 
-                              "Leu"="L", "Lys"="K", "Met"="M", "Phe"="F", "Pro"="P",
-                              "Ser"="S", "Thr"="T", "Trp"="W", "Tyr"="Y", "Val"="V"))
-  return(seqvec)
+## Reducing AAindexDataBase and getting simplified output like matrix
+getAAindexMatrix <- function(){
+   #loadAAindexMatrix() 
+   accs <- names(aaindex)
+   aaindexVectors <- lapply(accs, function(x) as.vector(aaindex[[x]]$I))
+   aaindexMatrix <- do.call(rbind, aaindexVectors)
+   rnames <- accs
+   cnames <- names(aaindex[[1]]$I)
+   rownames(aaindexMatrix) <- rnames
+   colnames(aaindexMatrix) <- mapAA(cnames)
+   # replace NA with zeros
+   aaindexMatrix[is.na(aaindexMatrix)] <- 0
+   return(aaindexMatrix)
 }
 
 
 ## This function load AAindex database
-loadAAindex <- function(){
+loadAAindexDataBase <- function(){
    load(file = 'data/aaindex.rda', envir = .GlobalEnv)
 }
 
-#' reformatSequence
-#'
-#' This function reformat the sequence to remove inconsistencies
-#'
-#' @param seq sequence
-#'
-
-
-reformatSequence <- function(seq){
-  seq <- gsub("X", "", seq)
-  seq <- gsub("B", "", seq)
-  seq <- gsub("J", "", seq)
-  seq <- gsub("Z", "", seq)
-  seq <- gsub("U", "", seq)
-  return (seq)
+## This function load AAindexMatrix to fast computation.
+loadAAindexMatrix <- function(){
+   load(file = 'data/aaindexMatrix.rda', envir = .GlobalEnv)
 }
 
-#' removePTM
-#'
-#' This function reformat the sequence to remove all PTM labers.
-#' Useful for example to compute AAindex Isoelectric point
-#'
-#' @param seq sequence
-#'
+## loading aaindex database.
+loadAAindexDataBase()
 
-removePTM <- function(seq){
-  seq <- gsub("o", "", seq)
-  seq <- gsub("m", "", seq)
-  seq <- gsub("n", "", seq)
-  seq <- gsub("p", "", seq)
-  return (seq)
-}
-
-
-#' processTerminalSequence
-#'
-#' This function reformat the sequence removing Search Engine notation.
-#' 
-#' Example:
-#' 
-#' sequence <- "K.SDFGHQASSR.L"
-#' s <- processTerminalSequence(seq = sequence)
-#' 
-#' The result will be:
-#' s = SDFGHQASSR
-#' 
-#' @param seq sequence
-#' 
-processTerminalSequence <- function (seq){
-  
-  before_dot <- 3
-  after_dot   <- nchar(seq) - 2
-  seq <- substr(seq, start = before_dot, stop = after_dot)
-  return (seq)
-}
+## loading aaindex simplified matrix.
+loadAAindexMatrix()
