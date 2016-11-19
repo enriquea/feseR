@@ -70,6 +70,7 @@ loadAAindexDataBase <- function(){
    load(file = 'data/aaindex.rda', envir = .GlobalEnv)
 }
 
+
 ## This function load AAindexMatrix to fast computation.
 loadAAindexMatrix <- function(){
    load(file = 'data/aaindexMatrix.rda', envir = .GlobalEnv)
