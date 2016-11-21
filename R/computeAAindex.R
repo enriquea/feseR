@@ -1,7 +1,14 @@
 ## load libraries
 require(plyr)
 
-## This function compute amino acid sequence AAindex property given an accession code.
+
+#' computeAAindexValueByAccession
+#'
+#' This function compute an amino acid sequence AAindex property given an accession code.
+#'
+#' @param seq Amino acid sequence
+#' @param accession Valid AAindex accession code
+#'
 computeAAindexValueByAccession <- function(seq, accession){
   
       if (!accession %in% names(aaindex)){
@@ -21,8 +28,12 @@ computeAAindexValueByAccession <- function(seq, accession){
 }
 
 
-## This function compute all AAindex values given a sequence
-
+#' computeAllAAindexValues
+#'
+#' This function compute all AAindex values given an amino acid sequence.
+#'
+#' @param seq Amino acid sequence
+#'
 computeAllAAindexValues <- function(seq){
    #loadAAindex()
       sequence <- toupper(seq)
@@ -39,8 +50,12 @@ computeAllAAindexValues <- function(seq){
    return(features)
 }
 
-
-## Retrieving AAindex table from accesion code
+#' getAAindexTable
+#'
+#' Retrieving basic information from AAindex database given an accession code
+#'
+#' @param accession Valid AAindex accession code
+#'
 getAAindexTable <- function(accession){
   #retrive table using acc code
   aaindexTable <- as.table(aaindex[[accession]]$I)
@@ -48,8 +63,10 @@ getAAindexTable <- function(accession){
   return(aaindexTable)
 }
 
-
-## Reducing AAindexDataBase and getting simplified output like matrix
+#' getAAindexMatrix
+#'
+#' This function reduce AAindex DataBase and get a simplified features(descriptors) matrix.
+#'
 getAAindexMatrix <- function(){
    #loadAAindexMatrix() 
    accs <- names(aaindex)
@@ -64,14 +81,19 @@ getAAindexMatrix <- function(){
    return(aaindexMatrix)
 }
 
-
-## This function load AAindex database
+#' loadAAindexDataBase
+#'
+#' This function load the AAindex database
+#'
 loadAAindexDataBase <- function(){
    load(file = 'data/aaindex.rda', envir = .GlobalEnv)
 }
 
 
-## This function load AAindexMatrix to fast computation.
+#' loadAAindexMatrix
+#'
+#' This function load the AAindexMatrix to fast descriptor computation.
+#' 
 loadAAindexMatrix <- function(){
    load(file = 'data/aaindexMatrix.rda', envir = .GlobalEnv)
 }
