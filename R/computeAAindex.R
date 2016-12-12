@@ -1,6 +1,3 @@
-## load libraries
-require(plyr)
-
 
 #' computeAAindexValueByAccession
 #'
@@ -86,7 +83,8 @@ getAAindexMatrix <- function(){
 #' This function load the AAindex database
 #'
 loadAAindexDataBase <- function(){
-   load(file = 'data/aaindex.rda', envir = .GlobalEnv)
+  filepath <- system.file("extdata", 'aaindex.rda', package = "cnveR")
+  load(filepath)
 }
 
 
@@ -95,11 +93,6 @@ loadAAindexDataBase <- function(){
 #' This function load the AAindexMatrix to fast descriptor computation.
 #' 
 loadAAindexMatrix <- function(){
-   load(file = 'data/aaindexMatrix.rda', envir = .GlobalEnv)
+  filepath <- system.file("extdata", 'aaindexMatrix.rda', package = "cnveR")
+  load(filepath)
 }
-
-## loading aaindex database.
-loadAAindexDataBase()
-
-## loading aaindex simplified matrix.
-loadAAindexMatrix()

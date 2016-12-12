@@ -1,6 +1,3 @@
-## load libraries
-require(plyr)
-
 
 #' mapAA
 #'

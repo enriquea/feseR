@@ -1,9 +1,4 @@
 
-require(ggplot2)
-require(grid)
-require(gridExtra)
-
-
 #' plotPCVariances
 #'
 #' This function plots the Standard Desviation, Proportion of Variances and Accumulative Variance

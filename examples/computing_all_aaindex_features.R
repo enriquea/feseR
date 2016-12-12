@@ -1,7 +1,10 @@
 
-## load functions and data
-source('R/computeAAindex.R')
-source('R/sequenceProcessing.R')
+## loading aaindex database.
+loadAAindexDataBase()
+
+## loading aaindex simplified matrix.
+loadAAindexMatrix()
+
 
 ## Computing AAindex features
 
