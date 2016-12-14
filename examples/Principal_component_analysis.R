@@ -2,35 +2,18 @@
 ## Principal Component Analysis 
 ## See https://github.com/chinadd/PCA for data description
 
-# load array expression dataset
-load(file = 'data/GSE5325_array_expression_filtered.rda', envir = .GlobalEnv)
+# original data (array expression dataset)
+class(GSE5325) <- "numeric"
+features <- GSE5325[,-ncol(GSE5325)]
 
-# get gene index from original dataset
-rnames <- genearray$ID_REF
-
-# get sample names from original dataset and exclude name from first column (gene reference index)
-cnames <- names(genearray)[-1]
-
-# convert to matrix
-m <- as.matrix(sapply(genearray[,-1], as.numeric))
-
-# rename colums matrix
-colnames(m) <- cnames
-
-# rename rows matrix
-rownames(m) <- rnames
-
-#replacing 
-#m[is.na(m)] <- 0
+# response variable (estrogen receptor)
+class <- GSE5325[,ncol(GSE5325)]
 
 # getting only those genes with expression level for all samples
-m1 <- m[complete.cases(m),]
-
-#apply transpose to get the data in this way: rows=samples, columns=variables(genes).
-m2 <- t(m1)
+m <- features[ , colSums(is.na(features)) == 0]
 
 # compute PCs using inbuilt function R 'prcomp', set scale=FALSE since expression values are already normalized.
-m.pca <- prcomp(m2, center = TRUE, scale. = FALSE) 
+m.pca <- prcomp(m, center = TRUE, scale. = FALSE) 
 
 #print(m.pca)
 #plot(m.pca, type = "l")

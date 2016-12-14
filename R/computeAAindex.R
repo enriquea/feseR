@@ -78,21 +78,3 @@ getAAindexMatrix <- function(){
    return(aaindexMatrix)
 }
 
-#' loadAAindexDataBase
-#'
-#' This function load the AAindex database
-#'
-loadAAindexDataBase <- function(){
-  filepath <- system.file("extdata", 'aaindex.rda', package = "feseR")
-  load(filepath)
-}
-
-
-#' loadAAindexMatrix
-#'
-#' This function load the AAindexMatrix to fast descriptor computation.
-#' 
-loadAAindexMatrix <- function(){
-  filepath <- system.file("extdata", 'aaindexMatrix.rda', package = "feseR")
-  load(filepath)
-}

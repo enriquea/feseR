@@ -1,15 +1,8 @@
-
-## loading aaindex database.
-loadAAindexDataBase()
-
-## loading aaindex simplified matrix.
-loadAAindexMatrix()
-
-
 ## Computing AAindex features
 
 # loading peptides file
-brancaDataSet <- read.table(file = 'data/branca_peptides.csv', header = TRUE, sep = ',', stringsAsFactors = FALSE)
+filepath <- system.file("extdata", 'branca_peptides.csv', package = "feseR")
+brancaDataSet <- read.table(file = filepath, header = TRUE, sep = ',', stringsAsFactors = FALSE)
 
 # retrieving aminoacid sequences
 sequence.list <- as.list(brancaDataSet$sequence)

@@ -1,13 +1,11 @@
+library(caret)
 
-# Load caret library
-require(caret);
-
-# Load data features (example: Branca dataset with AAindex descriptors estimated)
-load(file = "data/brancaAAindexFeatures.rda")
+# data features (example: Branca dataset with AAindex descriptors estimated)
+# use computing_all_aaindex_features.R to create this dataset.
 data_features <- brancaFeatures
 
 # Load data classes (example: Response variable, Branca peptides experimental variable)
-data_class <- as.matrix(read.table('data/branca_peptides.csv', header=TRUE, sep = ','))[,2]
+data_class <- as.matrix(brancaDataSet)[,2]
 
 # Scale data features
 data_features<- scale(data_features, center=TRUE, scale=TRUE)
