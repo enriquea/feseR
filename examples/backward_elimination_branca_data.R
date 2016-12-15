@@ -32,9 +32,9 @@ testDescr <- testDescr[, -highCorr]
 # caret function: the rfe is the backwards selection, 
 # c is the possible sizes of the features sets, 
 # and method the optimization method is a support vector machine.
-svmProfile <- rfe(x=trainDescr, 
-                  y=trainClass, 
-                  sizes=c(1:5), 
-                  rfeControl=rfeControl(functions = caretFuncs, number = 2), 
+svmProfile <- rfe(x= trainDescr, 
+                  y= as.numeric(trainClass), 
+                  sizes = c(1:5,10,15), 
+                  rfeControl = rfeControl(functions = caretFuncs, number = 2), 
                   method = "svmRadial", 
                   fit = FALSE)
