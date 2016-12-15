@@ -1,11 +1,11 @@
 Package: feseR
-Title: What the Package Does (one line, title case)
+Title: Feature selection examples in R enviroment.
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: person("Enrique", "Audain", email = "enrique.audain@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends:
-    R (>= 3.3.2)
-License: What license is it under?
+    R (>= 3.2.3)
+License: Apache 2
 Encoding: UTF-8
 LazyData: true
 Imports:
