@@ -27,8 +27,8 @@ df_variances <- as.data.frame(t(summ_stat$importance))
 df_variances <- cbind(PCs=c(1:nrow(df_variances)), df_variances) 
 colnames(df_variances) <- c('PCs','Standard_desviation','Proportion_of_variance','Accumulative_variance')
 
-# plotting histogram from PCs variance
+ # plotting histogram from PCs variance
 plots_variance <- plotPCVariances(dat = df_variances)
-png('figures/Principal_component_variance.png', width = 800, height = 800)
+png('figures/Principal_component_variance_peptides.png', width = 800, height = 800)
 multiplot(plotlist = plots_variance, cols=2)
 dev.off()
