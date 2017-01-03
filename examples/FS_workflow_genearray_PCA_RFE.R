@@ -1,4 +1,4 @@
-
+library(caret)
 
 # original data (array expression dataset)
 class(GSE5325) <- "numeric"
@@ -34,7 +34,7 @@ dev.off()
 ## Selection by filtering - Linear Discriminat analyis 
 sbfProfile <- sbf(x = trainDescr,
                   y = as.factor(trainClass), 
-                  sbfControl = sbfControl(functions = ldaSBF, method = "repeatedcv", repeats = 5, saveDetails = TRUE))
+                  sbfControl = sbfControl(functions = ldaSBF, method = "repeatedcv", repeats = 10, saveDetails = TRUE))
 
 summary(sbfProfile)
 

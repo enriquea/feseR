@@ -87,11 +87,11 @@ dev.off()
 ## Selection by filtering - Linear Discriminat analyis 
 sbfProfile <- sbf(x = trainDescr,
                   y = as.factor(trainClass), 
-                  sbfControl = sbfControl(functions = ldaSBF, method = "repeatedcv", repeats = 5, saveDetails = TRUE))
+                  sbfControl = sbfControl(functions = ldaSBF, method = "repeatedcv", repeats = 10, saveDetails = TRUE))
 
 summary(sbfProfile)
 
-png("figures/GSE5325_hist_selection_by_filtering_LDA.png", width = 800, height = 800)
+png("figures/GSE5325_MatrixCorr_LDA.png", width = 800, height = 800)
 resampleHist(object = sbfProfile, type = 'histogram')
 dev.off()
 
