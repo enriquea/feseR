@@ -89,3 +89,23 @@ multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
     }
   }
 }
+
+
+#' plotMultipleSeries
+#'
+#' This fucntion plots multiple error bars
+#'
+#' @param dat the data.frame with the follow format (four column): series, expect var, predict var, error
+#'
+plotMultipleSeries <- function (dat){
+  # rename data
+  names(dat) <- c('series', 'x', 'y', 'error')
+  pd <- position_dodge(.3) # Save the dodge spec because we use it repeatedly
+  plot <- ggplot(dat, aes(x=x, y=y, colour=series, group=series)) +
+    geom_errorbar(aes(ymin=y-error, ymax=y+error),
+                  width=.2, size=0.25, colour="black", position=pd) +
+    geom_line(position=pd) +
+    geom_point(position=pd, size=2.5)
+  return (plot)
+}
+
