@@ -2,13 +2,13 @@ library(caret)
 
 # data features (example: Branca dataset with AAindex descriptors estimated)
 # use computing_all_aaindex_features.R to create this dataset.
-data_features <- brancaFeatures
+data_features <- peptideFeatures
 
 # Load data classes (example: Response variable, Branca peptides experimental variable)
-data_class <- as.matrix(brancaDataSet)[,2]
+data_class <- as.matrix(peptideDataSet)[,2]
 
 # Scale data features
-data_features<- scale(data_features, center=TRUE, scale=TRUE)
+data_features <- scale(data_features, center=TRUE, scale=TRUE)
 
 # Divide the dataset in train and test sets
 inTrain <- createDataPartition(data_class, p = 3/4, list = FALSE)

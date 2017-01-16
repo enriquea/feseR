@@ -1,42 +1,103 @@
 library(caret)
 library(randomForest)
 
-## Principal Component Analysis 
-## See https://github.com/chinadd/PCA for data description
-
 # original data (array expression dataset)
 class(GSE5325) <- "numeric"
-data_features <- GSE5325[,-ncol(GSE5325)]
+features <- GSE5325[,-ncol(GSE5325)]
 
 # getting only those genes with expression level for all samples
-data_features <- data_features[ , colSums(is.na(data_features)) == 0]
+features <- features[ , colSums(is.na(features)) == 0]
 
 # response variable (estrogen receptor)
-data_class <- as.matrix(GSE5325[,ncol(GSE5325)])
+class <- as.matrix(GSE5325[,ncol(GSE5325)])
 
 # Scale data features
-data_features <- scale(data_features, center=TRUE, scale=TRUE)
+features <- scale(features, center=TRUE, scale=FALSE)
 
-# Divide the dataset in train and test sets
-inTrain <- createDataPartition(data_class, p = 3/4, list = FALSE)
+#### multivariate correlation filter implementation
 
-# Create the Training Dataset for Descriptors 
-trainDescr <- data_features[inTrain,]
+featuresCorr <- cor(features)
+highCorr <- findCorrelation(featuresCorr, 0.7)
+features <- features[, -highCorr]
 
-# Create the Testing dataset for Descriptors
-testDescr <- data_features[-inTrain,]
+# define workflow metrics
+n <- 20 # folds to repit the entire workflow
+tv <- vector() # workflow time
+nVars <- vector() # number of features in the final model
+accv <- vector() # prediction accuracy
 
-trainClass <- data_class[inTrain]
-testClass <- data_class[-inTrain]
 
-# Here, we can included a correlation matrix analysis to remove 
-# the redundant features before to perform the backwards selection approach.
-descrCorr <- cor(trainDescr)
-highCorr <- findCorrelation(descrCorr, 0.5)
-trainDescr <- trainDescr[, -highCorr]
-testDescr <- testDescr[, -highCorr]
+for(i in seq(1,n,1)){
+  
+  t1 <- proc.time()  
+  
+  # Divide the dataset in train and test sets
+  inTrain <- createDataPartition(as.factor(class), p = 3/4, list = FALSE)
+  
+  # Create the training dataset
+  trainDescr <- features[inTrain,]
+  
+  # Create the testing dataset
+  testDescr <- features[-inTrain,]
+  
+  # create the training class subset
+  trainClass <- class[inTrain]
+  
+  # create the testing class subset
+  testClass <- class[-inTrain]
+  
+  #### RFE-Random Forest
+  rfProfile <- rfe(x = trainDescr, 
+                   y = as.factor(trainClass),
+                   maximize = TRUE,
+                   metric = 'Accuracy',
+                   sizes =  c(1:10,15,20,25,30,35,40,45,50,60,70,80,90,100),
+                   rfeControl = rfeControl(functions = rfFuncs, method = 'cv', number = 10, verbose = TRUE))
+  
+  ## predict variable response (class) for all sammples with the new model
+  predictedClass <- predict(rfProfile, newdata = testDescr)
+  
+  ## compute prediction accuracy
+  accTable <- postResample(predictedClass, as.factor(testClass))
+  accv[i] <- accTable[['Accuracy']] 
+  
+  ## keep best model
+  if (accv[length(accv)] >= max(accv)){
+    bestModel <- rfProfile
+  }
+  
+  ## retrive number of variable used
+  nVar <- rfProfile$optsize
+  nVars[i] <- nVar
+  
+  ## timing workflow
+  t2 <- proc.time() - t1
+  tv[i] <- t2[['elapsed']]
+  
+}
 
-#### Example 1. RFE-SVM
+## summary metrics
+nVar_mean <- mean(nVars)
+time_mean <- mean(tv)
+acc_mean <- mean(accv)
+acc_sd <- sd(accv)
+
+# Dataframe with variables metric (i.e. Accuracy) information
+results <- bestModel$results
+
+# save results
+write.table(results, file = "analysis/metrics_genearray_multivariate_RFE-RF.txt", sep = "\t", row.names = FALSE)
+
+# save comple model profile
+save(bestModel, file = "profiles/multivatiate_rfe_rf.rda")
+
+# plotting rfe object
+png("figures/GSE5325_multivariate_RFE-RF.png", width = 800, height = 800)
+plot.rfe(x = bestModel, xlim = c(-5:550))
+dev.off()
+
+
+#### RFE-SVM
 
 # caret function: the rfe is the backwards selection, 
 # c is the possible sizes of the features sets, 
@@ -44,54 +105,32 @@ testDescr <- testDescr[, -highCorr]
 
 # Warning (If regression): You are trying to do regression and your outcome only has two possible values Are you trying to do classification? 
 # If so, use a 2 level factor as your outcome column.
-svmProfile <- rfe(x = trainDescr, 
-                  y = trainClass, 
-                  sizes = c(1:5,10,20,30,50,100,200,300,400,500), 
-                  rfeControl = rfeControl(functions = caretFuncs, number = 10), 
-                  method = "svmLinear", 
-                  fit = FALSE)
+# svmProfile <- rfe(x = trainDescr, 
+#                   y = trainClass, 
+#                   sizes = c(1:5,10,20,30,50,100,200,300,400,500), 
+#                   rfeControl = rfeControl(functions = caretFuncs, number = 10), 
+#                   method = "svmLinear", 
+#                   fit = FALSE)
+# 
+# # Dataframe with variables metric (i.e. RMSE) information
+# resultTable <- svmProfile$results
+# 
+# # plotting rfe object
+# png("figures/GSE5325_Correlation_RFE-SVMLinear.png", width = 800, height = 800)
+# plot.rfe(x = svmProfile, metric = 'RMSE', output = 'ggplot')
+# dev.off()
+# 
 
-# Dataframe with variables metric (i.e. RMSE) information
-resultTable <- svmProfile$results
-
-# plotting rfe object
-png("figures/GSE5325_Correlation_RFE-SVMLinear.png", width = 800, height = 800)
-plot.rfe(x = svmProfile, metric = 'RMSE', output = 'ggplot')
-dev.off()
-
-
-#### Example 2. RFE-RandomForest
-
-# caret function: the rfe is the backwards selection, 
-# c is the possible sizes of the features sets, 
-# and the optimization method is random forest.
-# Note that response variable must be converted to factor since
-# this is a classification problem (non-regression)
-
-rfProfile <- rfe(x = trainDescr, 
-                 y = as.factor(trainClass), 
-                 sizes = c(1:5,10,20,30,50,100,200,300,400,500), 
-                 rfeControl = rfeControl(functions = rfFuncs, method="cv", number=10))
-
-# Dataframe with variables metric (i.e. Accuracy) information
-results <- rfProfile$results
-
-# plotting rfe object
-png("figures/GSE5325_importance_variables_random_forest.png", width = 800, height = 800)
-plot.rfe(x = rfProfile)
-dev.off()
-
-
-#### Example 3. RFE-LDA
+#### RFE-LDA
 
 ## Selection by filtering - Linear Discriminat analyis 
-sbfProfile <- sbf(x = trainDescr,
-                  y = as.factor(trainClass), 
-                  sbfControl = sbfControl(functions = ldaSBF, method = "repeatedcv", repeats = 10, saveDetails = TRUE))
-
-summary(sbfProfile)
-
-png("figures/GSE5325_MatrixCorr_LDA.png", width = 800, height = 800)
-resampleHist(object = sbfProfile, type = 'histogram')
-dev.off()
-
+# sbfProfile <- sbf(x = trainDescr,
+#                   y = as.factor(trainClass), 
+#                   sbfControl = sbfControl(functions = ldaSBF, method = "repeatedcv", repeats = 10, saveDetails = TRUE))
+# 
+# summary(sbfProfile)
+# 
+# png("figures/GSE5325_MatrixCorr_LDA.png", width = 800, height = 800)
+# resampleHist(object = sbfProfile, type = 'histogram')
+# dev.off()
+# 

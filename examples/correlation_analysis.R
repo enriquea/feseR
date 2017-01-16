@@ -4,10 +4,10 @@ library(caret)
 library(FSelector)
 
 # Branca features dataset
-peptideFeatures <- brancaFeatures
+peptideFeatures <- peptideFeatures
 
 # peptide class
-peptideClass <- as.vector(brancaDataSet)[,2]
+peptideClass <- as.vector(peptideDataSet)[,2]
 
 #scale all the features 
 peptides.scale <- scale(peptideFeatures, center=TRUE, scale=TRUE)
