@@ -3,10 +3,10 @@ library(doMC)
 
 # data features (example: Branca dataset with AAindex descriptors estimated)
 # use computing_all_aaindex_features.R to create this dataset.
-data_features <- brancaFeatures
+data_features <- peptideFeatures
 
 # Load data classes (example: Response variable, Branca peptides experimental variable)
-data_class <- as.matrix(brancaDataSet)[,2]
+data_class <- as.matrix(peptideDataSet)[,2]
 
 # compute PCs using inbuilt function R 'prcomp', set scale=FALSE since expression values are already normalized.
 peptides.pca <- prcomp(data_features, center = TRUE, scale. = TRUE) 
