@@ -1,3 +1,3 @@
-# Feature-Selection-R
+# Feature-Selection-in-R
 
-- Several functions and practical examples to perform feature estimation and selection in R environment.
+- Several functions and practical examples to perform feature selection in R environment.

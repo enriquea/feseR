@@ -2,15 +2,15 @@ library(caret)
 library(randomForest)
 library(FSelector)
 
-
-# original data (array expression dataset)
+# original data (gene array expression dataset)
+load('data/GSE5325_genearray.rda')
 class(GSE5325) <- "numeric"
 features <- GSE5325[,-ncol(GSE5325)]
 
-# getting only those genes with expression level for all samples
+# getting only those genes with expression level for all samples (~8000)
 features <- features[ , colSums(is.na(features)) == 0]
 
-# response variable (estrogen receptor)
+# getting response variable (estrogen receptor)
 class <- as.matrix(GSE5325[,ncol(GSE5325)])
 
 # Scale data features
@@ -26,9 +26,8 @@ weights <- linear.correlation(class ~., merge)
 attr_subset <- subset(weights, attr_importance >= 0.3)
 features <- features[, colnames(features) %in% rownames(attr_subset)]
 
-# compute PCs using inbuilt function R 'prcomp', set scale=FALSE since expression values are already normalized.
+# compute PCs using the built-in function R 'prcomp', set scale=FALSE since expression values are already normalized.
 features.pca <- prcomp(features, center = TRUE, scale. = FALSE) 
-
 
 # define workflow metrics
 n <- 20 # folds to repit the entire workflow
@@ -66,7 +65,7 @@ for(i in seq(1,n,1)){
                                            number = 10,
                                            verbose = TRUE))
   
-  ## predict variable response (class) for all sammples with the new model
+  ## predict variable response (class) for test sammples with the new model
   predictedClass <- predict(rfProfile, newdata = testDescr)
   
   ## compute prediction accuracy
