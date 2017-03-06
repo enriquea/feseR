@@ -3,6 +3,7 @@
 ## See https://github.com/chinadd/PCA for data description
 
 # original data (array expression dataset)
+load('data/GSE5325_genearray.rda')
 class(GSE5325) <- "numeric"
 features <- GSE5325[,-ncol(GSE5325)]
 

@@ -4,8 +4,8 @@ library(caret)
 # Variable selection with random forest
 
 # original data (array expression dataset)
+load('data/GSE5325_genearray.rda')
 class(GSE5325) <- "numeric"
-
 features <- GSE5325[,-ncol(GSE5325)]
 
 # response variable (estrogen receptor)
