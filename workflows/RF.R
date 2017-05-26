@@ -1,6 +1,8 @@
 library(randomForest)
 library(caret)
 
+source('R/visualization.R') # load viz function
+
 # fs_worflow_description
 fs_workflow_description <- 'Naive Random Forest (RF) implementation for variable
                             importance evaluation.'

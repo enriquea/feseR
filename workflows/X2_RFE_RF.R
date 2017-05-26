@@ -3,6 +3,8 @@ library(randomForest)
 library(FSelector)
 library(plyr)
 
+source('R/visualization.R') # load viz function
+
 # Brief description about the Feature Selection workflow
 fs_workflow_description <- 'Univariate canonical correlation (X2) 
                             with Recursive Feature Elimination (RFE) 

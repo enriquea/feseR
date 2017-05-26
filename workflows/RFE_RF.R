@@ -1,6 +1,8 @@
 library(caret)
 library(randomForest)
 
+source('R/visualization.R') # load viz function
+
 # fs_worflow_description
 fs_workflow_description <- 'Recursive Feature Elimination (RFE) 
                             wrapped with Random Forest (RF).'
