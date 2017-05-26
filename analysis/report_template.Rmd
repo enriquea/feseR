@@ -1,0 +1,94 @@
+---
+title: "Feature Selection (FS) workflow report"
+author: "Enrique Audain"
+date: "May 18, 2017"
+output:
+  pdf_document: 
+    fig_caption: yes
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<style type="text/css">
+.table {
+    width: 50%;
+}
+</style>
+
+## Introduction
+
+The report summarizing the Feature Selection pipeline results.
+
+## Feature Selection workflow 
+```{r, results='asis', echo=FALSE}
+cat(fs_workflow_description)
+```
+
+## Dataset
+```{r, results='asis', echo=FALSE}
+cat(dat_description)
+```
+
+## Summary stats from training phase
+\footnotesize
+```{r, results='asis', echo=FALSE}
+# use result from the 'best' trainied model
+if(wf_label == 'RF'){
+   message('Information not available for this FS workflow implementation')
+} else{
+  acc.training.table <- results_training
+  pander::pandoc.table(acc.training.table, digits = 4,  split.table = Inf,
+                       caption = 'Best model metrics from 10-folds cross-validation resampling.')
+}
+```
+
+\newpage
+## Summary stats from testing phase
+```{r, results='asis', echo=FALSE}
+ acc.test.table1 <- test_stats
+ acc.test.table2 <- data.frame('Accuracy_Mean' = mean(accv), 
+                               'Accuracy_SD'   = sd(accv),
+                               'Accuracy_Max'  = max(accv))
+ pander::pandoc.table(acc.test.table1, digits = 4, justify = 'right', split.table = Inf, emphasize.strong.rows = best_test_run,
+                      caption = 'Classification metrics from twenty class-balanced and randomized runs.', caption.size = 8)
+ pander::pandoc.table(acc.test.table2,  split.table = Inf, digits = 4)
+```
+
+## Workflow runtime
+```{r, results='asis', echo=FALSE}
+cat(round(time_end/60, 3), 'minutes')
+```
+
+\newpage
+
+## Plots
+
+### Visualization of the classification using PCA
+
+* Groups distribution on the first two Principal Components (PC1 and PC2) from the original data (without apply any FS method).
+
+```{r, fig.width=14, fig.height=14, dev='png', echo=FALSE, results='hide'}
+ if(grepl(pattern = 'PCA', x = wf_label, fixed = TRUE)){
+  message('PCA plot not available for this FS workflow setting')
+} else {
+ multiplot(plotlist = p1, cols=2)
+ #dev.off()
+}
+```
+
+\newpage
+
+* Groups distribution on the first two Principal Components (PC1 and PC2) after to apply the FS workflow.
+
+```{r, fig.width=14, fig.height=14, dev='png', echo=FALSE, results='hide'}
+if(grepl(pattern = 'PCA', x = wf_label, fixed = TRUE)){
+  message('PCA plot not available for this FS workflow setting')
+} else {
+ multiplot(plotlist = p2, cols=2)
+ #dev.off()
+}
+ 
+```
