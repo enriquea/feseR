@@ -1,58 +1,80 @@
+library(ggbiplot)
+library(ggplot2)
 
 #' plotPCVariances
 #'
-#' This function plots the Standard Desviation, Proportion of Variances and Accumulative Variance
+#' This function plots the Standard Desviation, Proportion of Variances, Accumulative Variance
 #' for each Principal Component of the dataset, it returns a set of plots
 #' 
-#' @param dat dataframe: first col: PCs index
-#' @param na.rm ignore the null values
+#' @param prcomp prcomp: Principal component object from prcomp R function.
+#' @param groups groups: Vector with the 'class variables' as the same size of the original data.
 #'
-plotPCVariances <- function(dat, na.rm = TRUE, ...) {
-  #retrive colum names
-  nm  <-  names(dat)
- 
-   plots <- list()  # new empty list
- 
-    for (i in 1:length(nm)) {
-    
-        if(nm[1L] != nm[i]){
-         
-        plot <- ggplot()
-         
-          if(nm[i]=='Standard_desviation'){
-            plot <- ggplot(dat) + 
-            geom_point(aes_string(x=nm[1L], y = nm[i]), alpha = .5, stat = 'identity', colour = 'black') +
-              xlab(nm[1L]) +
-              ylab(nm[i]) +
-              theme_bw()
-          }
-          if(nm[i]=='Proportion_of_variance'){
-            plot <- ggplot(dat) + 
-            geom_bar(aes_string(x=nm[1L], y = nm[i]), alpha = .5,  stat = 'identity', colour = 'blue') +
-              xlab(nm[1L]) +
-              ylab(nm[i]) +
-              theme_bw()
-          }
-          if(nm[i]=='Accumulative_variance'){
-            plot <- ggplot(dat) + 
-            geom_line(aes_string(x=nm[1L], y = nm[i]), alpha = .5, stat = 'identity', colour = 'orange') +
-              xlab(nm[1L]) +
-              ylab(nm[i]) +
-              theme_bw()
-          }
-          
-          plot +
-          theme(panel.grid.major = element_blank(), 
-                panel.grid.minor = element_blank(), 
-                axis.line = element_line(colour = "black"))
+
+plotPCVariances <- function(prcomp = NULL, groups = NULL) {
   
-          plots[[i]] <- plot # add each plot into plot list
-     
-     }
-  }
+  # parsing prcomp object
+  summ_stat <- summary(prcomp)
+  
+  # getting dataframe with PCs variance information
+  dat <- as.data.frame(t(summ_stat$importance))
+  
+  #add Principal Component index
+  dat <- cbind(PCs=c(1:nrow(dat)), dat) 
+  colnames(dat) <- c('PCs','Standard_Desviation','Proportion_of_Variance','Accumulative_Variance')
+  
+  plots <- list()  # new empty list
+  
+  p1 <- ggplot(dat) + 
+    geom_point(aes_string(x='PCs', y = 'Standard_Desviation'), alpha = .5, stat = 'identity', colour = 'black') +
+    xlab('Principal Component') +
+    ylab('Standard Deviation') +
+    theme_bw() +
+    theme(axis.text = element_text(size=12),
+          axis.title = element_text(size=14),
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(), 
+          axis.line = element_line(colour = "black"))
+  
+  p2 <- ggplot(dat) + 
+    geom_bar(aes_string(x='PCs', y = 'Proportion_of_Variance'), alpha = .5,  stat = 'identity', colour = 'blue') +
+    xlab('Principal Component') +
+    ylab('Proportion of Variance') +
+    theme_bw() +
+    theme(axis.text = element_text(size=12),
+          axis.title = element_text(size=14),
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(), 
+          axis.line = element_line(colour = "black"))
+  
+  p3 <- ggplot(dat) + 
+    geom_line(aes_string(x='PCs', y = 'Accumulative_Variance'), alpha = .5, stat = 'identity', colour = 'orange') +
+    xlab('Principal Component') +
+    ylab('Accumulative Variance') +
+    theme_bw()+
+    theme(axis.text = element_text(size=12),
+          axis.title = element_text(size=14),
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(), 
+          axis.line = element_line(colour = "black"))
+  
+  p <- ggbiplot(prcomp, obs.scale = 1, var.scale = 1,
+                groups = as.factor(groups), ellipse = TRUE, circle = FALSE, var.axes = FALSE) +
+    scale_color_discrete(name = 'class') +
+    # theme(legend.direction = 'horizontal', legend.position = 'top') +
+    theme_bw()+
+    theme(axis.text = element_text(size=12),
+          axis.title = element_text(size=14),
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(), 
+          axis.line = element_line(colour = "black"))
+  # add each plot into plot list
+  plots[[1]] <- p
+  plots[[2]] <- p1 
+  plots[[3]] <- p2 
+  plots[[4]] <- p3 
+  
   return (plots)
 }
-
 
 
 #' multiplot
