@@ -1,11 +1,10 @@
 ---
 title: "Feature Selection (FS) workflow report"
-author: "Enrique Audain"
 date: "May 18, 2017"
 output:
-  pdf_document: 
-    fig_caption: yes
+  pdf_document: default
   html_document: default
+  fig_caption: yes
 ---
 
 ```{r setup, include=FALSE}
