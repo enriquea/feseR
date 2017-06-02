@@ -1,4 +1,4 @@
-# Feature Selection in R
+# Feature Selection in R (feseR)
 
 ## Introduction
 
@@ -24,6 +24,6 @@ We provide some example datasets (Transcriptomics and Proteomics, [here](https:/
 #### Regression
 - Isopoint (Peptides fractionated by IPG-HPLC and analyzed by Mass spectrometry)
 
-
 ## How to cite
-If you find useful this tool in your work, you could want citing us: Yasset Perez-Riverol, Max Khun, Juan Antonio Vizcaíno, Marc-Phillip Hitz, Enrique Audain. *Accurate and Fast feature selection workflow for high-dimensional omics data*. In preparation.
+If you find useful this tool in your work, you could want citing us:
+Yasset Perez-Riverol, Max Kuhn, Juan Antonio Vizcaíno, Marc-Phillip Hitz, Enrique Audain. *Accurate and Fast feature selection workflow for high-dimensional omics data*. In preparation.
