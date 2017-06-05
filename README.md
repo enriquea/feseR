@@ -26,4 +26,4 @@ We provide some example datasets (Transcriptomics and Proteomics, [here](https:/
 
 ## How to cite
 If you find useful this tool in your work, you could want citing us:
-Yasset Perez-Riverol, Max Kuhn, Juan Antonio Vizcaíno, Marc-Phillip Hitz, Enrique Audain. *Accurate and Fast feature selection workflow for high-dimensional omics data*. In preparation.
+Yasset Perez-Riverol, Max Kuhn, Juan Antonio Vizcaíno, Marc-Phillip Hitz, Enrique Audain. 2017. *Accurate and Fast feature selection workflow for high-dimensional omics data*. doi: https://doi.org/10.1101/144162.
