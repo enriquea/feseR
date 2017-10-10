@@ -1,0 +1,141 @@
+---
+title: "feseR: Combining efficiently multiple feature selection methods in a R-workflow"
+author: "Enrique Audain and Yasset Perez-Riverol"
+date: "`Octuber 2017`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+feseR provides funcionalities to combine multiple Feature Selection (FS) methods to analyze high-dimensional omics data in R environment. The different feature selection steps can be classificated in: Univariate (Correlation filter and Gain Information), Multivariate (Principal Component Analysis and Matrix Correlation based) and Recursive Feature Elimination (wrapped up with a Machine Learning algorithm). The goal is to assemble the different steps in a efficient workflow to perform feature selection task in the context of classification and regression problems. The package includes also several example dataset.
+
+## Available dataset
+
+We provide some example dataset (Transcriptomics and Proteomics) with the package. Some general description of the data are listed bellow:
+
+* TNBC (Label-free deep proteome analysis of 44 (samples and technical replicates) human breast specimens)
+* GSE5325 (Analysis of breast cancer tumor samples using 2-color cDNA microarrays)
+* GSE48760 (Transcriptomics analysis of left ventricles of mouse subjected to an isoproterenol challenge)
+
+## Examples
+
+
+### Preparing your data
+
+```{r}
+  
+  library(feseR)
+
+   # loading example data (TNBC)
+   data(TNBC)
+
+   # retrive features
+   features <- TNBC[,-ncol(TNBC)]
+
+   # retrive class variable (expected last column)
+   class <- TNBC[,ncol(TNBC)]
+
+   # getting only those features (i.e. genes/proteins) with expression values for all instances (samples)
+   features <- features[ , colSums(is.na(features)) == 0]
+
+   # Scale data features. These transformations coerce the original predictors 
+   # to have zero mean and standard deviation equal one.
+   features <- scale(features, center=TRUE, scale=TRUE)
+
+```
+
+
+### Univariate filters
+
+```{r}
+  # filtering by correlation
+  output <- filter.corr(features = features, class = class, mincorr = 0.3)
+
+  # filtering by gain information
+  output <- filter.gain.inf(features = features, class = class, zero.gain.out = TRUE)
+```
+
+
+### Multivariate filters
+
+```{r}
+  # filtering by matrix correlation (cutoff 0.75)
+  output <- filter.matrix.corr(features = features, maxcorr = 0.75)
+  
+  # reducing data using PCA (return Principal Components holding 95% of variance)
+  output <- filter.pca(features = features, cum.var.cutoff = .95)
+```
+
+
+
+### Combining Feature Selection methods
+
+This function allows to combine FS methods in a workflow 
+
+```{r, message=FALSE, warning=FALSE}
+
+  # combining filter univariate corr., multivariate matrix corr. and
+  # recursive feature elimination wrapped with random forest
+   results <- combineFS(features = features, class = class,
+                        univariate = 'corr', mincorr = 0.3,
+                        multivariate = 'mcorr', maxcorr = .75,
+                        wrapper = 'rfe.rf', number.cv = 10, 
+                        group.sizes = seq(1,100,5), 
+                        extfolds = 20)
+
+
+   # getting the metrics from the training process
+   training_results <- results$training
+
+   training_results
+   
+   
+   # getting the metrics from the testing process
+   testing_results <- results$testing
+
+   testing_results
+```
+
+
+
+### Visualizing the FS process
+
+
+Visualizing the original data using PCA
+
+```{r fig1, fig.height = 6, fig.width = 6, fig.align = "center"}
+
+# plot PCA (PC1 vs. PC2)
+plot_pca(features = features, class = class, list.plot = FALSE)
+
+```
+
+
+
+Visualizing the filtered data (after apply the FS workflow) using PCA
+
+```{r fig2, fig.height = 6, fig.width = 6, fig.align = "center"}
+
+# getting the filtered matrix
+filtered.features <- features[,results$opt.variables]
+
+# plot PCA (PC1 vs. PC2)
+plot_pca(features = filtered.features, class = class, list.plot = FALSE)
+
+```
+
+
+
+Plotting the correlation matrix of final features
+
+```{r fig3, fig.height = 6, fig.width = 6, fig.align = "center"}
+
+# plot correlation matrix
+plot_corr(features = filtered.features, corr.method = 'pearson')
+
+```
+
