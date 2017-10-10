@@ -2,12 +2,21 @@
 title: "feseR: Combining efficiently multiple feature selection methods in a R-workflow"
 author: "Enrique Audain and Yasset Perez-Riverol"
 date: "`Octuber 2017`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+  pdf_document: default
+  # html_document: default
+  fig_caption: yes
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<style type="text/css">
+.table {
+    width: 50%;
+}
+</style>
 
 ## Introduction
 
@@ -39,7 +48,8 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
    # getting class variable (expected last column)
    class <- TNBC[,ncol(TNBC)]
 
-   # getting only those features (i.e. genes/proteins) with expression values for all instances (samples)
+   # getting only those features (i.e. genes/proteins) 
+   # with expression values for all instances (samples)
    features <- features[ , colSums(is.na(features)) == 0]
 
    # Scale data features. These transformations coerce the original predictors 
@@ -71,7 +81,6 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
 ```
 
 
-
 ### Combining Feature Selection methods
 
 This function allows to combine multiple feature selection methods in a workflow 
@@ -82,7 +91,7 @@ This function allows to combine multiple feature selection methods in a workflow
   # recursive feature elimination wrapped with random forest
    results <- combineFS(features = features, class = class,
                         univariate = 'corr', mincorr = 0.3,
-                        multivariate = 'mcorr', maxcorr = .75,
+                        multivariate = 'mcorr', maxcorr = 0.75,
                         wrapper = 'rfe.rf', number.cv = 10, 
                         group.sizes = seq(1,100,5), 
                         extfolds = 20)
@@ -90,35 +99,50 @@ This function allows to combine multiple feature selection methods in a workflow
 
    # getting the metrics from the training process
    training_results <- results$training
-
-   training_results
-   
    
    # getting the metrics from the testing process
    testing_results <- results$testing
 
-   testing_results
 ```
 
+\newpage
 
+Results from the training phase
+```{r, results='asis', echo=FALSE}
+   
+   pander::pandoc.table(training_results, digits = 4,  split.table = Inf,
+                       caption = 'Best model metrics from 10-folds cross-validation resampling.')
+
+```
+
+\newpage
+
+Results from the testing phase
+```{r, results='asis', echo=FALSE}
+   
+   pander::pandoc.table(testing_results, digits = 4,  split.table = Inf,
+                       caption = 'Classification metrics from twenty class-balanced and randomized runs.')
+
+```
+
+\newpage
 
 ### Visualizing the Feature Selection process
 
+* Groups distribution on the first two Principal Components (PC1 and PC2) from the original data (without apply any Feature Selection method).
 
-Visualizing the original data using PCA
-
-```{r fig1, fig.height = 6, fig.width = 6, fig.align = "center"}
+```{r fig1, fig.width=6, fig.height=6, fig.align = "center"}
 
 # plot PCA (PC1 vs. PC2)
 plot_pca(features = features, class = class, list.plot = FALSE)
 
 ```
 
+\newpage
 
+* Groups distribution on the first two Principal Components (PC1 and PC2) after to apply the Feature Selection workflow.
 
-Visualizing the filtered data (after apply the FS workflow) using PCA
-
-```{r fig2, fig.height = 6, fig.width = 6, fig.align = "center"}
+```{r fig2, fig.width=6, fig.height=6, fig.align = "center"}
 
 # getting the filtered matrix
 filtered.features <- features[,results$opt.variables]
@@ -128,11 +152,11 @@ plot_pca(features = filtered.features, class = class, list.plot = FALSE)
 
 ```
 
+\newpage
 
+* Plotting the correlation matrix of final features.
 
-Plotting the correlation matrix of final features
-
-```{r fig3, fig.height = 6, fig.width = 6, fig.align = "center"}
+```{r fig3, fig.width=6, fig.height=6, fig.align = "center"}
 
 # plot correlation matrix
 plot_corr(features = filtered.features, corr.method = 'pearson')
