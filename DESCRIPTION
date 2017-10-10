@@ -5,8 +5,8 @@ Version: 0.1.0
 Author: Enrique Audain
 Maintainer: Enrique Audain <enrique.audain@gmail.com>
 Description: This package provides funcionalities to combine multiple features selection methods into a workflow.
-             The methods used can be clasify in three main categories: i) Univariate filters,
-             ii) Multivariate filters and iii) Wrapper method. It also provides function to visualize the feature
+             The methods used can be classify in three main categories: i) Univariate filters,
+             ii) Multivariate filters and iii) Wrapper method. It also provides functions to visualize the feature
              selection process.
 License: GPL-2 | file LICENSE
 Encoding: UTF-8

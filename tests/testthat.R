@@ -1,4 +1,4 @@
 library(testthat)
-library(FESER)
+library(feseR)
 
-test_check("FESER")
+test_check("testthat")

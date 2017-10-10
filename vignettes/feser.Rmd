@@ -33,10 +33,10 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
    # loading example data (TNBC)
    data(TNBC)
 
-   # retrive features
+   # getting features
    features <- TNBC[,-ncol(TNBC)]
 
-   # retrive class variable (expected last column)
+   # getting class variable (expected last column)
    class <- TNBC[,ncol(TNBC)]
 
    # getting only those features (i.e. genes/proteins) with expression values for all instances (samples)
@@ -74,7 +74,7 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
 
 ### Combining Feature Selection methods
 
-This function allows to combine FS methods in a workflow 
+This function allows to combine multiple feature selection methods in a workflow 
 
 ```{r, message=FALSE, warning=FALSE}
 
@@ -102,7 +102,7 @@ This function allows to combine FS methods in a workflow
 
 
 
-### Visualizing the FS process
+### Visualizing the Feature Selection process
 
 
 Visualizing the original data using PCA

@@ -1,5 +1,5 @@
 
-library(FESER)
+library(feseR)
 
 context("Feature selection evals")
 
