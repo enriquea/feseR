@@ -19,7 +19,3 @@ A matrix filtered.
 \description{
 Filter features based on its correletion with a predictor variable.
 }
-\examples{
-output <- filter.corr(features, class, .30)
-
-}

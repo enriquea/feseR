@@ -11,15 +11,12 @@
 #'
 #' @return A matrix filtered.
 #'
-#' @examples
-#' output <- filter.corr(features, class, .30)
-#'
 #' @export
 
 filter.corr <- function(features, class, mincorr = 0.3){
 
   # Matrix input validation
-  valid.matrix(features)
+  valid.matrix(mx = features)
 
   if(!is.vector(class) & (nrow(features) != length(class))){
      stop('Error processing input data...')
@@ -64,15 +61,12 @@ filter.corr <- function(features, class, mincorr = 0.3){
 #'
 #' @return A matrix filtered.
 #'
-#' @examples
-#' output <- filter.gain.inf(features, class, zero.gain.out = TRUE)
-#'
 #' @export
 
 filter.gain.inf <- function(features, class, n.percent = 0.75, zero.gain.out = TRUE) {
 
   # Matrix input validation
-  valid.matrix(features)
+  valid.matrix(mx = features)
 
   if(!is.vector(class) & (nrow(features) != length(class))){
     stop('Error processing input data...')
@@ -123,16 +117,13 @@ filter.gain.inf <- function(features, class, n.percent = 0.75, zero.gain.out = T
 #'
 #' @return A matrix filtered.
 #'
-#' @examples
-#' output <- filter.matrix.corr(features, maxcorr = 0.75)
-#'
 #' @export
 
 
 filter.matrix.corr <- function(features, maxcorr = 0.75){
 
   # Matrix input validation
-  valid.matrix(features)
+  valid.matrix(mx = features)
 
   # hold original input
   input <- features
@@ -165,17 +156,14 @@ filter.matrix.corr <- function(features, maxcorr = 0.75){
 #' @param cum.var.cutoff Cumulative variance proportion cutoff. Used to return the Principal Componets (PCs) which satisfies that value. If 1 (default), all PCs will be returned.
 #'
 #' @return A matrix of Principal components.
-#'
-#' @examples
-#' output <- filter.pca(features, center = TRUE, scale = TRUE, cum.var.cutoff = 1)
-#'
+#' 
 #' @export
 
 
 filter.pca <- function(features, center = TRUE, scale = TRUE, cum.var.cutoff = 1){
 
      # Matrix input validation
-     valid.matrix(features)
+     valid.matrix(mx = features)
 
      # hold original input
      input <- features
@@ -216,9 +204,6 @@ filter.pca <- function(features, center = TRUE, scale = TRUE, cum.var.cutoff = 1
 #'
 #' @return A list the elements. See \code{\link[caret]{rfe}} for more details.
 #'
-#' @examples
-#' output <- rfeRF (features, class, number.cv = 10, group.sizes = seq(1,20,2))
-#'
 #'
 #' @export
 
@@ -226,7 +211,7 @@ filter.pca <- function(features, center = TRUE, scale = TRUE, cum.var.cutoff = 1
 rfeRF <- function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15,100,5))) {
 
   # Matrix input validation
-  valid.matrix(features)
+  valid.matrix(mx = features)
 
   if(!is.vector(class) & (nrow(features) != length(class))){
     stop('Error processing input data...')

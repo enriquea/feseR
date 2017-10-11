@@ -10,8 +10,6 @@ Description: This package provides funcionalities to combine multiple features s
              selection process.
 License: GPL-2 | file LICENSE
 Encoding: UTF-8
-Depends:
-    R (>= 3.2)
 Imports:
     caret,
     e1071,

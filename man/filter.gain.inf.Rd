@@ -21,7 +21,3 @@ A matrix filtered.
 \description{
 Gain information filter implementation.
 }
-\examples{
-output <- filter.gain.inf(features, class, zero.gain.out = TRUE)
-
-}

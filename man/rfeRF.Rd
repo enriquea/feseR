@@ -22,8 +22,3 @@ A list the elements. See \code{\link[caret]{rfe}} for more details.
 \description{
 Recursive feature elimination (RFE) method wrapped with a Random Forest (RF) algorithm for feature importance evaluation.
 }
-\examples{
-output <- rfeRF (features, class, number.cv = 10, group.sizes = seq(1,20,2))
-
-
-}

@@ -17,7 +17,3 @@ A matrix filtered.
 \description{
 Compute matrix correlation between features and filter using a threshold.
 }
-\examples{
-output <- filter.matrix.corr(features, maxcorr = 0.75)
-
-}

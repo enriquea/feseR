@@ -1,7 +1,14 @@
 
 ## Useful functions for checking/comparing matrices
 
-## valid matrix
+#' valid.matrix
+#'
+#' Check if input is a valid matrix
+#'
+#' @param mx A numeric matrix as input.
+#'
+#' @return A matrix.
+#'
 
 valid.matrix <- function(mx) {
   if(!is.matrix(mx)) {
@@ -13,12 +20,20 @@ valid.matrix <- function(mx) {
   } else if (length(colnames(mx)) == 0) {
     stop('Column names are missing...')
   } else {
-    mx
+    return(mx)
   }
 }
 
 
-## compare matrix
+
+#' compare.matrix 
+#'
+#' @param input.matrix A numeric matrix as input.
+#' @param output.matrix A numeric matrix as input.
+#' @param description A brief description to print out.
+#'
+#' @return A message object.
+#'
 
 compare.matrix <- function(input.matrix, output.matrix, description = 'Number of removed features:') {
 

@@ -21,7 +21,3 @@ A matrix of Principal components.
 \description{
 Compute Principal Components from input matrix. Control how many components must be returned.
 }
-\examples{
-output <- filter.pca(features, center = TRUE, scale = TRUE, cum.var.cutoff = 1)
-
-}
