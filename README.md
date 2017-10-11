@@ -4,7 +4,7 @@
 
 ## Introduction
 
-We provide here a R package which combine multiple Feature Selection (FS) methods in a workflow for analizing high-dimentional omics. The different feature selection steps can be classificated in: Univariate (Correlation filter and Gain Information), Multivariate (Principal Component Analysis and Matrix Correlation based) and Recursive Feature Elimination (wrapped up with a Machine Learning algorithm, i.e. Random Forest). The goal is to essemble the different steps in a efficient workflow to perform feature selection task in the contex of classification and regression problems.
+We provide here a R package which combine multiple Feature Selection (FS) methods in a workflow for analizing high-dimentional omics data. The different feature selection steps can be classificated in: i) Univariate (Correlation filter and Gain Information), ii) Multivariate (Principal Component Analysis and Matrix Correlation based) and iii) Recursive Feature Elimination (wrapped up with a Machine Learning algorithm, i.e. Random Forest). The goal is to essemble the different steps in a efficient workflow to perform feature selection task in the contex of classification and regression problems.
 
 ## How to install
 
@@ -21,7 +21,7 @@ Then, we can install the package using:
 
 ## How to use
 
-We provide [here](https://github.com/enriquea/feseR/blob/master/vignettes/feseR.pdf) some examples for illustrating how to use the package.
+We provide [here](https://github.com/enriquea/feseR/blob/master/vignettes/feser.pdf) some examples for illustrating how to use the package.
 
 ## This library has been used in:
 

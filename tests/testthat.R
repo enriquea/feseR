@@ -1,4 +1,4 @@
 library(testthat)
 library(feseR)
 
-test_check("testthat")
+test_check("feseR")
