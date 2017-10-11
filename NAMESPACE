@@ -8,3 +8,6 @@ export(filter.pca)
 export(plot_corr)
 export(plot_pca)
 export(rfeRF)
+
+import(caret)
+importFrom("stats", "cor", "prcomp", "predict")
