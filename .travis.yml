@@ -20,6 +20,7 @@ install:
    
    ## For installing Github dependencies using rpack's DESCRIPTION
   - ./travis-tool.sh install_github vqv/ggbiplot
+  - ./travis-tool.sh install_github hadley/testthat
 
 notifications:
   email:
