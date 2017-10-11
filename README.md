@@ -21,7 +21,7 @@ Then, we can install the package using:
 
 ## How to use
 
-We provide [here](https://github.com/enriquea/feseR/blob/master/vignettes/feseR.html) some examples for illustrating how to use the package.
+We provide [here](https://github.com/enriquea/feseR/blob/master/vignettes/feseR.pdf) some examples for illustrating how to use the package.
 
 ## This library has been used in:
 
