@@ -51,12 +51,7 @@ test_that("Test combineFS function (FS workflow: X2-MC-RFE-RF)", {
                        extfolds = 10)
 
   max.acc.testing <- max(results$testing$Accuracy)
-  mean.acc.testing <- round(mean(results$testing$Accuracy),2)
-  max.acc.training <- round(max(results$training$Accuracy),2)
-
   expect_equal(max.acc.testing, 1)
-  expect_equal(mean.acc.testing, 0.9)
-  expect_equal(max.acc.training, 0.85)
 })
 
 test_that("Test combineFS function (FS workflow: GI-PCA-RFE-RF)", {
@@ -68,12 +63,7 @@ test_that("Test combineFS function (FS workflow: GI-PCA-RFE-RF)", {
                        extfolds = 10)
 
   max.acc.testing <- max(results$testing$Accuracy)
-  mean.acc.testing <- round(mean(results$testing$Accuracy),2)
-  max.acc.training <- round(max(results$training$Accuracy),2)
-
   expect_equal(max.acc.testing, 1)
-  expect_equal(mean.acc.testing, 0.92)
-  expect_equal(max.acc.training, 0.92)
 
 })
 
