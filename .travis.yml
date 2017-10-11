@@ -2,7 +2,6 @@
 
 sudo: required
 language: r
-r: bioc-devel
 cache: packages
 warnings_are_errors: false
 
