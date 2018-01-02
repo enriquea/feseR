@@ -30,4 +30,4 @@ Enrique Audain, Yassel Ramos, Henning Hermjakob, Darren R. Flower, Yasset Perez-
 ## How to cite
 
 If you find useful this tool in your work, you could want citing us:
-Yasset Perez-Riverol, Max Kuhn, Juan Antonio Vizcaíno, Marc-Phillip Hitz, Enrique Audain. 2017. *Accurate and Fast feature selection workflow for high-dimensional omics data*. doi: https://doi.org/10.1101/144162.
+Perez-Riverol Y, Kuhn M, Vizcaíno JA, Hitz M-P, Audain E (2017) Accurate and fast feature selection workflow for high-dimensional omics data. PLoS ONE 12(12): e0189875. https://doi.org/10.1371/journal.pone.0189875
