@@ -1,3 +1,9 @@
+
+# NOTE: This is the fork from the original feseR package. 
+The changes are made to implement parallel functionality for main computations. All credits should be made to the original authors.
+
+------------
+
 [![Travis build status](https://travis-ci.org/enriquea/feseR.svg?branch=master)](https://travis-ci.org/enriquea/feseR)
 
 # feseR: Feature Selection in R
@@ -15,7 +21,7 @@ The first step is to install `devtools`:
    
 Then, we can install the package using: 
 
-    install_github("enriquea/feseR")
+    install_github("drychkov/feseR")
     library(feseR)
 
 
