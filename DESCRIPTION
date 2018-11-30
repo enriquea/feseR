@@ -1,9 +1,9 @@
 Package: feseR
 Type: Package
 Title: Feature Selection workflow in R
-Version: 0.1.0
+Version: 0.2.0
 Author: Enrique Audain
-Maintainer: Enrique Audain <enrique.audain@gmail.com>
+Maintainer: Enrique Audain <enrique.audain@gmail.com> & Dmitry Rychkov <dmitrychkov@gmail.com>
 Description: This package provides funcionalities to combine multiple features selection methods into a workflow.
              The methods used can be classify in three main categories: i) Univariate filters,
              ii) Multivariate filters and iii) Wrapper method. It also provides functions to visualize the feature
@@ -19,14 +19,15 @@ Imports:
     ggbiplot,
     ggplot2,
     corrplot
+    ROCR
 Suggests: 
     testthat,
     BiocStyle,
     knitr,
     rmarkdown
 LazyData: TRUE
-URL: http://github.com/enriquea/feseR
-BugReports: http://github.com/enriquea/feseR/issues
+URL: http://github.com/drychkov/feseR
+BugReports: http://github.com/drychkov/feseR/issues
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
