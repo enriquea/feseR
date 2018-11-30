@@ -47,6 +47,6 @@ compare.matrix <- function(input.matrix, output.matrix, description = 'Number of
   if (ncol2 < 2){
     stop('Removed all features from input matrix...')
   } else {
-    message(paste(description, round(ncol2/ncol1*100, 2), '%', sep = ' '))
+    message(paste(description, round((100 - ncol2/ncol1*100), 2), '%', sep = ' '))
   }
 }
