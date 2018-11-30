@@ -339,7 +339,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
     message("Step 3/3: Recursive feature elimination wrapped with random forest model.  It could take a while...")
     results <- foreach(i = seq(1, extfolds, 1), 
                        .packages = c("caret", "ROCR", "doParallel"), 
-                       .export = c("rfeRF2", "valid.matrix", "rfFuncs2"),
+                       .export = c("rfeRF", "valid.matrix", "rfFuncs2"),
                        .combine = 'comb',
                        .multicombine = TRUE) %dopar% {
                            message("Repeat process number ", i)
@@ -417,8 +417,8 @@ comb <- function(...) {
 }
 
                       
-# Fix for error in rfFuncs() in carte package when rerank=TRUE
-rfFuncs2 <- rfFuncs
+# Fix for error in rfFuncs() in caret package when rerank=TRUE
+rfFuncs2 <- caret::rfFuncs
 rfFuncs2$fit <- function(x, y, first, last, ...) {
     loadNamespace("randomForest")
     randomForest::randomForest(x, y, importance = T,...)
