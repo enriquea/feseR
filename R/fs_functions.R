@@ -233,7 +233,7 @@ rfeRF.old <- function(features, class, number.cv = 10, group.sizes = c(1:10, seq
   return(rfProfile) # return RF profile
 }
                                               
-rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), metric = "Accuracy") {
+rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), metric = "Accuracy", verbose = TRUE) {
     
     # Matrix input validation
     valid.matrix(mx = features)
@@ -257,7 +257,7 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
                                              method = "cv", 
                                              number = number.cv,
                                              allowParallel = TRUE,
-                                             verbose = TRUE))
+                                             verbose = verbose))
     return(rfProfile) # return RF profile
 }                       
                        
@@ -307,7 +307,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                        n.percent = 0.75, zero.gain.out = TRUE, multivariate = "mcorr", 
                        maxcorr = 0.75, cum.var.cutoff = 1, wrapper = "rfe.rf", 
                        number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), 
-                       extfolds = 10, partition = 2/3, metric = "Accuracy") 
+                       extfolds = 10, partition = 2/3, metric = "Accuracy", tolerance = 0, verbose = TRUE) 
 {
     set.seed(123)
     time_start <- proc.time()
@@ -351,7 +351,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                            if (wrapper == "rfe.rf") {
                                profile = rfeRF(features = trainDescr, class = trainClass, 
                                                 number.cv = number.cv, group.sizes = group.sizes,
-                                                metric = metric)
+                                                metric = metric, verbose = verbose)
                            }
                            else if (wrapper == "ga.rf") {
                                profile = gaRF(features = trainDescr, class = trainClass)
@@ -391,8 +391,8 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
     test_stats = do.call(rbind, results[,3])
     profile = do.call(list,results[,4])
     for (i in seq(1, extfolds, 1)) {
-        if (accv[i] >= max(accv) && nVars[i] <= min(nVars[which(accv == 
-                                                                max(accv))])) {
+        if (accv[i] >= max(accv)*(1 - tolerance) && nVars[i] <= min(nVars[which(accv == 
+                                                                max(accv)*(1 - tolerance))])) {
             bestModel <- profile[[i]]
         }
     }
@@ -406,7 +406,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
     results_training <- bestModel$results
     opt.variables <- bestModel$optVariables
     list.process <- list(opt.variables = opt.variables, training = results_training, 
-                         testing = test_stats, best.model = bestModel, runtime = time_end)
+                         testing = test_stats, best.model = bestModel, tolerance = tolerance, runtime = time_end)
     message("Process finalized!!!")
     return(list.process)
 }  
