@@ -242,7 +242,7 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
         stop("Error processing input data...")
     }
   
-    # funcs = rfFuncs2
+    funcs = rfFuncs2
     if (metric == "ROC") {
         funcs$summary = twoClassSummary  
     }
@@ -253,7 +253,7 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
                      maximize = TRUE, 
                      metric = metric, 
                      sizes = group.sizes, 
-                     rfeControl = rfeControl(functions = rfFuncs2, 
+                     rfeControl = rfeControl(functions = funcs, 
                                              method = "cv", 
                                              number = number.cv,
                                              allowParallel = TRUE,
