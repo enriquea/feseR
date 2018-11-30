@@ -391,8 +391,8 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
     test_stats = do.call(rbind, results[,3])
     profile = do.call(list,results[,4])
     for (i in seq(1, extfolds, 1)) {
-        if (accv[i] >= max(accv)*(1 - tolerance) && nVars[i] <= min(nVars[which(accv == 
-                                                                max(accv)*(1 - tolerance))])) {
+        if (accv[i] >= max(accv)*(1 - tolerance/100) && nVars[i] <= min(nVars[which(accv == 
+                                                                max(accv)*(1 - tolerance/100))])) {
             bestModel <- profile[[i]]
         }
     }
@@ -405,8 +405,12 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                                  c("Accuracy", "Kappa", "AccuracyPValue", "ROC", "Sens", "Spec")]
     results_training <- bestModel$results
     opt.variables <- bestModel$optVariables
-    list.process <- list(opt.variables = opt.variables, training = results_training, 
-                         testing = test_stats, best.model = bestModel, tolerance = tolerance, runtime = time_end)
+    list.process <- list(opt.variables = opt.variables, 
+                         training = results_training, 
+                         testing = test_stats, 
+                         best.model = bestModel, 
+                         tolerance = paste0(tolerance, "%"), 
+                         runtime = time_end)
     message("Process finalized!!!")
     return(list.process)
 }  
