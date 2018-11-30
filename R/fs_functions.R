@@ -135,7 +135,7 @@ filter.matrix.corr <- function(features, maxcorr = 0.75){
   highCorr <- caret::findCorrelation(descrCorr, maxcorr)
 
   # filter correlated features
-  if(!length(highCorr)) {
+  if(length(highCorr)) {
     features <- features[, -highCorr]
   }
 
