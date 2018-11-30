@@ -391,7 +391,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
     test_stats = do.call(rbind, results[,3])
     profile = do.call(list,results[,4])
     for (i in seq(1, extfolds, 1)) {
-        if (accv[i] >= max(accv)*(1 - tolerance/100) && nVars[i] <= min(nVars[which(accv == 
+        if (accv[i] >= max(accv)*(1 - tolerance/100) && nVars[i] <= min(nVars[which(accv >= 
                                                                 max(accv)*(1 - tolerance/100))])) {
             bestModel <- profile[[i]]
         }
