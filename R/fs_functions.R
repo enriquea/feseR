@@ -413,11 +413,11 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
     }
     
     time_end <- (proc.time() - time_start)["elapsed"]
-    names(test_stats) <- names(results[, 3]) #names(confMatrix$overall)
+    #names(test_stats) <- names(results[, 3]) #names(confMatrix$overall)
     test_stats <- cbind(Run = c(1:extfolds), Variables = nVars, 
                         test_stats)
     test_stats <- test_stats[, colnames(test_stats) %in% 
-                                 c("Accuracy", "Kappa", "AccuracyPValue", "ROC", "Sens", "Spec")]
+                                 c("Run", "Variables", "Accuracy", "Kappa", "AccuracyPValue", "ROC", "Sens", "Spec")]
     results_training <- bestModel$results
     opt.variables <- bestModel$optVariables
     list.process <- list(opt.variables = opt.variables, 
