@@ -247,7 +247,19 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
         funcs$summary = twoClassSummary  
     }
     if(tolerance != 0) {
-      funcs$selectSize = pickSizeTolerance(tol = tolerance,...)
+      funcs$selectSize = function (x, metric, tol = tolerance, maximize) {
+        if (!maximize) {
+          best <- min(x[, metric])
+          perf <- (x[, metric] - best)/best * 100
+          flag <- perf <= tol
+        }
+        else {
+          best <- max(x[, metric])
+          perf <- (best - x[, metric])/best * 100
+          flag <- perf <= tol
+        }
+        min(x[flag, "Variables"])
+      }
     }
     
     #### recursive feature elimination-random forest
@@ -310,7 +322,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                        n.percent = 0.75, zero.gain.out = TRUE, multivariate = "mcorr", 
                        maxcorr = 0.75, cum.var.cutoff = 1, wrapper = "rfe.rf", 
                        number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), 
-                       extfolds = 10, partition = 2/3, metric = "Accuracy", tolerance = 0, verbose = TRUE, test = FALSE) 
+                       extfolds = 10, partition = 2/3, metric = "Accuracy", tolerance = 0, verbose = TRUE) 
 {
     set.seed(123)
     time_start <- proc.time()
@@ -413,8 +425,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                          testing = test_stats, 
                          best.model = bestModel, 
                          tolerance = paste0(tolerance, "%"), 
-                         runtime = time_end,
-                         test = results[test])
+                         runtime = time_end)
     message("Process finalized!!!")
     return(list.process)
 }  
