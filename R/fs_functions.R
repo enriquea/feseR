@@ -233,7 +233,7 @@ rfeRF.old <- function(features, class, number.cv = 10, group.sizes = c(1:10, seq
   return(rfProfile) # return RF profile
 }
                                               
-rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), metric = "Accuracy", verbose = TRUE) {
+rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), metric = "Accuracy", verbose = TRUE, tolerance = 0) {
     
     # Matrix input validation
     valid.matrix(mx = features)
@@ -245,6 +245,9 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
     funcs = rfFuncs2
     if (metric == "ROC") {
         funcs$summary = twoClassSummary  
+    }
+    if(tolerance != 0) {
+      funcs$selectSize = pickSizeTolerance(tol = tolerance,...)
     }
     
     #### recursive feature elimination-random forest
@@ -307,7 +310,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                        n.percent = 0.75, zero.gain.out = TRUE, multivariate = "mcorr", 
                        maxcorr = 0.75, cum.var.cutoff = 1, wrapper = "rfe.rf", 
                        number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), 
-                       extfolds = 10, partition = 2/3, metric = "Accuracy", tolerance = 0, verbose = TRUE) 
+                       extfolds = 10, partition = 2/3, metric = "Accuracy", tolerance = 0, verbose = TRUE, test = FALSE) 
 {
     set.seed(123)
     time_start <- proc.time()
@@ -351,7 +354,7 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                            if (wrapper == "rfe.rf") {
                                profile = rfeRF(features = trainDescr, class = trainClass, 
                                                 number.cv = number.cv, group.sizes = group.sizes,
-                                                metric = metric, verbose = verbose)
+                                                metric = metric, verbose = verbose, tolerance = tolerance)
                            }
                            else if (wrapper == "ga.rf") {
                                profile = gaRF(features = trainDescr, class = trainClass)
@@ -410,7 +413,8 @@ combineFS = function(features, class, univariate = "corr", mincorr = 0.3,
                          testing = test_stats, 
                          best.model = bestModel, 
                          tolerance = paste0(tolerance, "%"), 
-                         runtime = time_end)
+                         runtime = time_end,
+                         test = results[test])
     message("Process finalized!!!")
     return(list.process)
 }  
@@ -454,6 +458,8 @@ rfFuncs2$rank <- function(object, x, y) {
     vimp$var <- rownames(vimp)
     vimp
 }
+
+
                        
                        
 
