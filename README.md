@@ -1,6 +1,11 @@
 
 # NOTE: This is the fork from the original feseR package. 
-The changes are made to implement parallel functionality for main computations. All credits should be made to the original authors.
+The following changes are made: 
+1. Multithreading. You need to register a cluster with doParallel package.
+2. ROC metric for benchmarking the models as an alternative to Accuracy.
+3. Tolerance parameter in percents for choosing a simpler model, i.e. less features, with small sacrifise in performance. 
+
+All credits of this package should be made to the original authors.
 
 ------------
 
