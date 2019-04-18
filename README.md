@@ -1,3 +1,14 @@
+
+# NOTE: This is the fork from the original feseR package. 
+The following changes are made: 
+1. Multithreading. You need to register a cluster with doParallel package.
+2. ROC metric for benchmarking the models as an alternative to Accuracy.
+3. Tolerance parameter in percents for choosing a simpler model, i.e. less features, with small sacrifise in performance. 
+
+All credits of this package should be made to the original authors.
+
+------------
+
 [![Travis build status](https://travis-ci.org/enriquea/feseR.svg?branch=master)](https://travis-ci.org/enriquea/feseR)
 
 # feseR: Feature Selection in R
@@ -15,7 +26,7 @@ The first step is to install `devtools`:
    
 Then, we can install the package using: 
 
-    install_github("enriquea/feseR")
+    install_github("drychkov/feseR")
     library(feseR)
 
 
