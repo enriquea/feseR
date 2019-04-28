@@ -4,6 +4,9 @@ language: R
 sudo: false
 cache: packages
 
+r_github_packages:
+  - vqv/ggbiplot
+
 notifications:
   email:
     on_success: enrique.audain@gmail.com

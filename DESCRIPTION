@@ -23,12 +23,11 @@ Imports:
     foreach
 Suggests: 
     testthat,
-    BiocStyle,
     knitr,
     rmarkdown
 LazyData: TRUE
-URL: http://github.com/drychkov/feseR
-BugReports: http://github.com/drychkov/feseR/issues
+URL: http://github.com/enriquea/feseR
+BugReports: http://github.com/enriquea/feseR/issues
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
