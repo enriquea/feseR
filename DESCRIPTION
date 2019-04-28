@@ -19,7 +19,8 @@ Imports:
     ggbiplot,
     ggplot2,
     corrplot,
-    ROCR
+    ROCR,
+    foreach
 Suggests: 
     testthat,
     BiocStyle,
