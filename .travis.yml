@@ -1,29 +1,8 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-sudo: required
-language: r
+language: R
+sudo: false
 cache: packages
-warnings_are_errors: false
-
-before_install:
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
-
-install:
-    ## For installing all CRAN dependencies using rpack's DESCRIPTION
-  - ./travis-tool.sh install_deps
-  
-   ## For installing all Bioconductor dependencies using rpack's DESCRIPTION
-  - ./travis-tool.sh install_bioc_deps
-   
-   ## For installing Github dependencies using rpack's DESCRIPTION
-  - ./travis-tool.sh install_github vqv/ggbiplot
-  - ./travis-tool.sh install_github hadley/testthat
-  
-repos:
-  CRAN: https://cloud.r-project.org
-  ropensci: http://packages.ropensci.org
 
 notifications:
   email:
