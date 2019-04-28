@@ -11,3 +11,4 @@ export(rfeRF)
 
 import(caret)
 importFrom("stats", "cor", "prcomp", "predict")
+importFrom(foreach, "%dopar%", "foreach")
