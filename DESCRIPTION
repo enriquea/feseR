@@ -20,7 +20,8 @@ Imports:
     ggplot2,
     corrplot,
     ROCR,
-    foreach
+    foreach,
+    doParallel
 Suggests: 
     testthat,
     knitr,
