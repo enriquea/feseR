@@ -290,18 +290,20 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
 #' @param features A numeric matrix as input.
 #' @param class Response variable as numeric vector. It will be coerced to factor.
 #'
-#' @param univariate Descrition of the Univariate filter to be used. Set 'corr' (default) for correlation filter or 'gain' for gain information.
+#' @param univariate Descrition of the Univariate filter to be used. Set 'corr' (default) for correlation filter, 'gain' for gain information or none.
 #' @param mincorr The threshold controling the Univariate correlation filter.
 #' @param n.percent If 'gain' is selected, this parameter controls the percent of features (with higher) to be returned.
 #' @param zero.gain.out Is TRUE (default), zero-gain features will be filtered out (n.percent will be ignored).
 #'
-#' @param multivariate Multivariate filter to be used. Set 'mcorr' (default) for correlation filter or 'pca' for Principal Component Analysis.
+#' @param multivariate Multivariate filter to be used. Set 'mcorr' (default) for correlation filter, 'pca' for Principal Component Analysis or none.
 #' @param maxcorr The threshold controling the matrix correlation filter (default value 0.75).
 #' @param cum.var.cutoff If 'pca' is selected, this parameter controls the PCA process. See function \code{\link{filter.pca}}.
 #'
 #' @param wrapper Wrapper method to be used. Set 'rfe.rf' (default) for recursive feature elimination wrapped with random forest.
 #' @param number.cv See \code{\link{rfeRF}} for description.
 #' @param group.sizes See \code{\link{rfeRF}} for description.
+#' @param metric Metric to evaluate performance ('Accuracy' (default), 'Kappa' or 'ROC').
+#' @param verbose Make the output verbose. 
 #'
 #' @param extfolds Number of times (default 10) to repeat the entire FS process randomizing the dataset (test/training).
 #' @param partition Parameter controling the data partition in test and training dataset. It generates random and class-balanced dataset.
@@ -319,116 +321,139 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
 
                        
 combineFS = function(features, class, univariate = "corr", mincorr = 0.3, 
-                       n.percent = 0.75, zero.gain.out = TRUE, multivariate = "mcorr", 
-                       maxcorr = 0.75, cum.var.cutoff = 1, wrapper = "rfe.rf", 
-                       number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), 
-                       extfolds = 10, partition = 2/3, metric = "Accuracy", tolerance = 0, verbose = TRUE) 
+                     n.percent = 0.75, zero.gain.out = TRUE, multivariate = "mcorr", 
+                     maxcorr = 0.75, cum.var.cutoff = 1, wrapper = "rfe.rf", 
+                     number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), 
+                     extfolds = 10, partition = 2/3, metric = "Accuracy", tolerance = 0, verbose = TRUE) 
 {
-    set.seed(123)
-    time_start <- proc.time()
-    list.process <- list()
-    message("Step 1/3: Applying univariate filter...")
-    if (univariate == "corr") {
-        features <- filter.corr(features, class, mincorr = mincorr)
-    }
-    else if (univariate == "gain") {
-        features <- filter.gain.inf(features, class, zero.gain.out = zero.gain.out)
-    }
-    else {
-        stop("Undefined univariate filter...")
-    }
-    message("Step 2/3: Applying multivariate filter...")
-    if (multivariate == "mcorr") {
-        features <- filter.matrix.corr(features, maxcorr = maxcorr)
-    }
-    else if (multivariate == "pca") {
-        features <- filter.pca(features, cum.var.cutoff = cum.var.cutoff)
-    }
-    else {
-        stop("Undefined multivariate filter...")
-    }
-    nVars <- vector()
-    accv <- vector()
-    # profile = list()
-    test_stats <- NULL
-    message("Step 3/3: Recursive feature elimination wrapped with random forest model.  It could take a while...")
-    results <- foreach(i = seq(1, extfolds, 1), 
-                       .packages = c("caret", "ROCR", "doParallel"), 
-                       .export = c("rfeRF", "valid.matrix", "rfFuncs2"),
-                       .combine = 'comb',
-                       .multicombine = TRUE) %dopar% {
-                           message("Repeat process number ", i)
-                           inTrain <- createDataPartition(as.factor(class), p = partition, list = FALSE)
-                           trainDescr <- features[inTrain, ]
-                           testDescr <- features[-inTrain, ]
-                           trainClass <- class[inTrain]
-                           testClass <- class[-inTrain]
-                           if (wrapper == "rfe.rf") {
-                               profile = rfeRF(features = trainDescr, class = trainClass, 
-                                                number.cv = number.cv, group.sizes = group.sizes,
-                                                metric = metric, verbose = verbose, tolerance = tolerance)
-                           }
-                           else if (wrapper == "ga.rf") {
-                               profile = gaRF(features = trainDescr, class = trainClass)
-                           }
-                           else {
-                               stop("Undefined wrapper parameter...")
-                           }
-                           predictedClass <- predict(profile, newdata = testDescr)
-                           if (metric %in% c("Accuracy", "Kappa")) {
-                               confMatrix <- confusionMatrix(data = factor(predictedClass$pred), 
-                                                             reference = factor(testClass))
-                               res <-  confMatrix$overall
-                               accv <- confMatrix$overall[metric]
-                           } else if (metric == "ROC") {
-                               predictions = as.vector(predictedClass[,1])
-                               pred = prediction(as.numeric(predictions), testClass)
-                               
-                               perf_AUC = performance(pred, "auc") #Calculate the AUC value
-                               AUC = perf_AUC@y.values[[1]]
-                               
-                               ss = performance(pred, "sens", "spec")
-                               ss = c(ss@x.values[[1]][2], ss@y.values[[1]][2])
-                               
-                               accv <- AUC
-                               res <- as.data.frame(t(c(AUC, ss)))
-                               colnames(res) <- c("ROC", "Sens", "Spec")
-                               
-                               
-                           }
-
-                           nVars <- profile$optsize
-                           return(list(accv, nVars, res, profile))
+  
+  set.seed(123)
+  time_start <- proc.time()
+  list.process <- list()
+  
+  nVars <- vector()
+  accv <- vector()
+  # profile = list()
+  test_stats <- NULL
+  
+  results <- foreach(i = seq(1, extfolds, 1), 
+                     .packages = c("caret", "ROCR", "doParallel"), 
+                     .export = c("rfeRF", "valid.matrix", "rfFuncs2"),
+                     .combine = 'comb',
+                     .multicombine = TRUE) %dopar% {
+                       
+                       message("Repeat process number ", i)
+                       
+                       inTrain <- createDataPartition(as.factor(class), p = partition, list = FALSE)
+                       trainDescr <- features[inTrain, ] # training set
+                       testDescr <- features[-inTrain, ] # test set
+                       trainClass <- class[inTrain] # response training
+                       testClass <- class[-inTrain] # response test
+                       
+                       message(paste0("Step 1/3: Applying univariate filter: ", univariate))
+                       
+                       if (univariate == "corr") {
+                         trainDescr <- filter.corr(trainDescr, trainClass, mincorr = mincorr)
                        }
-    
-    accv = unlist(results[,1])
-    nVars = unlist(results[,2])
-    test_stats = do.call(rbind, results[,3])
-    profile = do.call(list,results[,4])
-    for (i in seq(1, extfolds, 1)) {
-        if (accv[i] >= max(accv)*(1 - tolerance/100) && nVars[i] <= min(nVars[which(accv >= 
-                                                                max(accv)*(1 - tolerance/100))])) {
-            bestModel <- profile[[i]]
-        }
+                       else if (univariate == "gain") {
+                         trainDescr <- filter.gain.inf(trainDescr, trainClass, zero.gain.out = zero.gain.out)
+                       }
+                       else if (univariate == 'none') {
+                         message("Univariate filter skipped...")
+                       } else {
+                         stop("Undefined univariate filter...")
+                       }
+                       
+                       message(paste0("Step 2/3: Applying multivariate filter: ", multivariate))
+                       
+                       if (multivariate == "mcorr") {
+                         trainDescr <- filter.matrix.corr(trainDescr, maxcorr = maxcorr)
+                       }
+                       else if (multivariate == "pca") {
+                         # TODO 
+                         # trainDescr <- filter.pca(trainDescr, cum.var.cutoff = cum.var.cutoff)
+                         # if PCA is used as multivariate filter, feautures in test data need to be
+                         # also converted to componentes (apply with out any filtering).
+                         # testDescr <- filter.pca(testDescr, cum.var.cutoff = 1) # no filtering (return all PCs)
+                         warning("PCA currently disabled in this setting. PCA filter skipped...")
+                       }
+                       else if (multivariate == 'none') {
+                         message("Multivariate filter skipped...")
+                       }
+                       else {
+                         stop("Undefined multivariate filter...")
+                       }
+                       
+                       if (wrapper == "rfe.rf") {
+                         
+                         message("Step 3/3: Recursive feature elimination wrapped with random forest model.  It could take a while...")
+                         
+                         profile = rfeRF(features = trainDescr, class = trainClass, 
+                                         number.cv = number.cv, group.sizes = group.sizes,
+                                         metric = metric, verbose = verbose, tolerance = tolerance)
+                       }
+                       else if (wrapper == "ga.rf") {
+                         profile = gaRF(features = trainDescr, class = trainClass)
+                       }
+                       else {
+                         stop("Undefined wrapper parameter...")
+                       }
+                       predictedClass <- predict(profile, newdata = testDescr)
+                       if (metric %in% c("Accuracy", "Kappa")) {
+                         confMatrix <- confusionMatrix(data = factor(predictedClass$pred), 
+                                                       reference = factor(testClass))
+                         res <-  confMatrix$overall
+                         accv <- confMatrix$overall[metric]
+                       } else if (metric == "ROC") {
+                         predictions = as.vector(predictedClass[,1])
+                         pred = prediction(as.numeric(predictions), testClass)
+                         
+                         perf_AUC = performance(pred, "auc") #Calculate the AUC value
+                         AUC = perf_AUC@y.values[[1]]
+                         
+                         ss = performance(pred, "sens", "spec")
+                         ss = c(ss@x.values[[1]][2], ss@y.values[[1]][2])
+                         
+                         accv <- AUC
+                         res <- as.data.frame(t(c(AUC, ss)))
+                         colnames(res) <- c("ROC", "Sens", "Spec")
+                         
+                         
+                       }
+                       
+                       nVars <- profile$optsize
+                       return(list(accv, nVars, res, profile))
+                     }
+  
+  accv = unlist(results[,1])
+  nVars = unlist(results[,2])
+  test_stats = do.call(rbind, results[,3])
+  profile = do.call(list,results[,4])
+  for (i in seq(1, extfolds, 1)) {
+    if (accv[i] >= max(accv)*(1 - tolerance/100) && nVars[i] <= min(nVars[which(accv >= 
+                                                                                max(accv)*(1 - tolerance/100))])) {
+      bestModel <- profile[[i]]
     }
-    
-    time_end <- (proc.time() - time_start)["elapsed"]
-    #names(test_stats) <- names(results[, 3]) #names(confMatrix$overall)
-    test_stats <- cbind(Run = c(1:extfolds), Variables = nVars, 
-                        test_stats)
-    test_stats <- test_stats[, colnames(test_stats) %in% 
-                                 c("Run", "Variables", "Accuracy", "Kappa", "AccuracyPValue", "ROC", "Sens", "Spec")]
-    results_training <- bestModel$results
-    opt.variables <- bestModel$optVariables
-    list.process <- list(opt.variables = opt.variables, 
-                         training = results_training, 
-                         testing = test_stats, 
-                         best.model = bestModel, 
-                         tolerance = paste0(tolerance, "%"), 
-                         runtime = time_end)
-    message("Process finalized!!!")
-    return(list.process)
+  }
+  
+  time_end <- (proc.time() - time_start)["elapsed"]
+  #names(test_stats) <- names(results[, 3]) #names(confMatrix$overall)
+  test_stats <- cbind(Run = c(1:extfolds), Variables = nVars, 
+                      test_stats)
+  test_stats <- test_stats[, colnames(test_stats) %in% 
+                             c("Run", "Variables", "Accuracy", "Kappa", "AccuracyPValue", "ROC", "Sens", "Spec")]
+  results_training <- bestModel$results
+  opt.variables <- bestModel$optVariables
+  list.process <- list(opt.variables = opt.variables, 
+                       training = results_training, 
+                       testing = test_stats, 
+                       best.model = bestModel, 
+                       tolerance = paste0(tolerance, "%"), 
+                       runtime = time_end)
+  message("Process finalized!!!")
+  return(list.process)
 }  
+
 
 # Helper function to combine results in foreach                       
 comb <- function(...) {
@@ -470,125 +495,6 @@ rfFuncs2$rank <- function(object, x, y) {
     vimp
 }
 
-
-                       
-                       
-
-                       
-combineFS.old <- function(features, class, univariate = 'corr', mincorr = 0.3, n.percent = 0.75, zero.gain.out = TRUE,
-                                       multivariate = 'mcorr', maxcorr = 0.75, cum.var.cutoff = 1,
-                                       wrapper = 'rfe.rf', number.cv = 10, group.sizes = c(1:10, seq(15,100,5)),
-                                       extfolds = 10, partition = 2/3) {
-
-      set.seed(123) # set seed (for reproducibility)
-      time_start <- proc.time() # timing the workflow
-      list.process <- list() # list holding all process metrics
-
-       ## Univariate implementation
-
-          message('Step 1/3: Applying univariate filter...')
-
-      if (univariate == 'corr'){
-          features <- filter.corr(features, class, mincorr = mincorr)
-      } else if (univariate == 'gain') {
-          features <- filter.gain.inf(features, class, zero.gain.out = zero.gain.out)
-      } else {
-         stop('Undefined univariate filter...')
-      }
-
-       ## Multiivariate implementation
-
-         message('Step 2/3: Applying multivariate filter...')
-
-      if (multivariate == 'mcorr'){
-         features <- filter.matrix.corr(features, maxcorr = maxcorr)
-      } else if (multivariate == 'pca') {
-         features <- filter.pca (features, cum.var.cutoff = cum.var.cutoff)
-      } else {
-        stop('Undefined multivariate filter...')
-      }
-
-      # defining workflow metrics
-
-      nVars <- vector() # number of features in the final model
-      accv <- vector() # prediction accuracy
-      test_stats <- data.frame() # test stats summary per runs
-
-        # training process and prediction on test data
-
-              message('Step 3/3: Recursive feature elimination wrapped with random forest model.  It could take a while...')
-
-        for(i in seq(1,extfolds,1)){
-
-            # Divide the dataset in train and test sets
-            inTrain <- caret::createDataPartition(as.factor(class), p = partition, list = FALSE)
-
-            # Create the training dataset
-            trainDescr <- features[inTrain,]
-
-            # Create the testing dataset
-            testDescr <- features[-inTrain,]
-
-            # Create the training class subset
-            trainClass <- class[inTrain]
-
-            # Create the testing class subset
-            testClass <- class[-inTrain]
-
-            ## wrapper method implementation (i.e. recursive feature elimination-random forest)
-            if (wrapper == 'rfe.rf'){
-               profile <- rfeRF(features = trainDescr, class = trainClass, number.cv = number.cv)
-            } else if (wrapper == 'ga.rf') {
-               profile <- gaRF(features = trainDescr, class = trainClass)
-            } else {
-              stop('Undefined wrapper parameter...')
-            }
-
-            ## predict variable response (class) for test sammples with the new model
-            predictedClass <- predict(profile, newdata = testDescr)
-
-            ## computing confussion matrix
-            confMatrix <- confusionMatrix(data = predictedClass$pred, reference = testClass)
-
-            ## building data frame with test phase stats
-            test_stats <- rbind(test_stats, confMatrix$overall)
-
-            ## getting accuracy from confusion matrix
-            accv[i] <- confMatrix$overall['Accuracy']
-
-            ## retrive number of variables used in the model
-            nVars[i] <- profile$optsize
-
-            ## Keep best model. It combines two conditions: (Maximal accuracy) AND (Minimal variables)
-            if (accv[i] >= max(accv) && nVars[i] <= min(nVars[which(accv == max(accv))])){
-                bestModel <- profile # replace model only if improve the metrics (accuracy and number of variables)
-            }
-        }
-
-        time_end <- (proc.time() - time_start)['elapsed'] # process runtime (sec.)
-
-        # formatting table with test metrics
-        names(test_stats) <- names(confMatrix$overall)
-        test_stats <- cbind(Run = c(1:extfolds), Variables = nVars, test_stats)
-        test_stats[,c('AccuracyLower','AccuracyUpper','McnemarPValue','AccuracyNull')] <- list(NULL) # remove some metrics (less verbose)
-
-        # dataframe with metrics (i.e. Accuracy) information from training phase (only for the best model)
-        results_training <- bestModel$results
-
-        # final matrix (with optimal variables)
-        opt.variables <- bestModel$optVariables
-
-        # save all process metrics
-        list.process <- list(opt.variables = opt.variables,
-                             training = results_training,
-                             testing = test_stats,
-                             best.model = bestModel,
-                             runtime = time_end)
-
-        message('Process finalized!!!')
-        return(list.process)
-}
-                       
-                       
+  
                        
 
