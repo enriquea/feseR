@@ -55,17 +55,17 @@ test_that("Test combineFS function (FS workflow: X2-MC-RFE-RF)", {
   expect_equal(max.acc.testing, 1)
 })
 
-test_that("Test combineFS function (FS workflow: GI-PCA-RFE-RF)", {
-  results <- combineFS(features = features, class = class,
-                       univariate = 'gain', zero.gain.out = TRUE,
-                       multivariate = 'pca', cum.var.cutoff = 1,
-                       wrapper = 'rfe.rf',
-                       number.cv = 10,
-                       extfolds = 10,
-                       verbose = FALSE)
-
-  max.acc.testing <- max(as.data.frame(results$testing)$Accuracy)
-  expect_more_than(max.acc.testing, 0.90)
-
-})
+# test_that("Test combineFS function (FS workflow: GI-PCA-RFE-RF)", {
+#   results <- combineFS(features = features, class = class,
+#                        univariate = 'gain', zero.gain.out = TRUE,
+#                        multivariate = 'pca', cum.var.cutoff = 1,
+#                        wrapper = 'rfe.rf',
+#                        number.cv = 10,
+#                        extfolds = 10,
+#                        verbose = FALSE)
+# 
+#   max.acc.testing <- max(as.data.frame(results$testing)$Accuracy)
+#   expect_more_than(max.acc.testing, 0.90)
+# 
+# })
 
