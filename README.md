@@ -37,8 +37,8 @@ Perez-Riverol Y, Kuhn M, Vizcaíno JA, Hitz M-P, Audain E (2017) Accurate and fa
 
 ## Mainteiner
 
-Enrique Audain 
+Enrique Audain ([enriquea](https://github.com/enriquea))
 
-Dmitry Rychkov 
+Dmitry Rychkov ([drychkov](https://github.com/drychkov))
 
-Yasset Perez-Riverol 
+Yasset Perez-Riverol ([ypriverol](https://github.com/ypriverol))
