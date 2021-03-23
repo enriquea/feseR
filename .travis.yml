@@ -7,7 +7,10 @@ warnings_are_errors: false
 
 r_github_packages:
   - vqv/ggbiplot
-
+  
+before_install:
+  - sudo $(which R) CMD javareconf
+  
 notifications:
   email:
     on_success: enrique.audain@gmail.com
