@@ -34,7 +34,7 @@ valid.matrix <- function(mx) {
 #' @return A message object.
 #'
 
-compare.matrix <- function(input.matrix, output.matrix) {
+compare.matrix <- function(input.matrix, output.matrix, description = 'Percent of removed features:') {
 
   if(!is.matrix(input.matrix) & !is.matrix(output.matrix)) {
     stop('Expected a matrix as input...')
@@ -48,8 +48,8 @@ compare.matrix <- function(input.matrix, output.matrix) {
   } else {
     pct_removed = round(((ncol1 - ncol2)/ncol1*100), 2)
     message(paste0(
-      'Kept ', ncol2, ' features out of ', ncol1, '...',
-      ' Number of removed features: ', pct_removed, '%'))
+      'Kept ', ncol2, ' features out of ', ncol1, '. ',
+       description, ' ', pct_removed, '%'))
   }
 }
 
