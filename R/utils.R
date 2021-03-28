@@ -8,8 +8,7 @@
 #' @param mx A numeric matrix as input.
 #'
 #' @return A matrix.
-#'
-
+#' 
 valid.matrix <- function(mx) {
   if(!is.matrix(mx)) {
     stop('Expected a matrix as input...')
@@ -30,10 +29,10 @@ valid.matrix <- function(mx) {
 #'
 #' @param input.matrix A numeric matrix as input.
 #' @param output.matrix A numeric matrix as input.
+#' @param description Short description summarizing this action.
 #'
 #' @return A message object.
 #'
-
 compare.matrix <- function(input.matrix, output.matrix, description = 'Percent of removed features:') {
 
   if(!is.matrix(input.matrix) & !is.matrix(output.matrix)) {
@@ -59,9 +58,7 @@ compare.matrix <- function(input.matrix, output.matrix, description = 'Percent o
 #' @param v Input vector
 #'
 #' @return Missing rate value
-#' @export
 #'
-#' @examples
 computeMissingRate <- function(v){
    v <- as.numeric(v)
    mr <- sum(is.na(v)) / length(v)
@@ -77,9 +74,7 @@ computeMissingRate <- function(v){
 #' @param mx A numeric matrix as input.
 #'
 #' @return A dataframe with features and missingness rate.
-#' @export
 #'
-#' @examples
 getMissingnessRateByFeatures <- function(mx){
   if(length(colnames(mx)) == 0) stop('Column (feature) names are missing...')
   missingness_rate <- apply(mx, 2, computeMissingRate)
@@ -95,12 +90,10 @@ getMissingnessRateByFeatures <- function(mx){
 #' @param method One of 'mean' of 'median'
 #'
 #' @return A vector with missing values imputed.
-#' @export
 #'
-#' @examples
 impute <- function(v, method='mean'){
    if(!method %in% c('mean', 'median')){
-     stop('method must be one of mean or median...')
+     stop('Imputation method must be one of mean or median...')
      }
    v <- as.numeric(v)
    if(method=='mean'){
@@ -115,7 +108,7 @@ impute <- function(v, method='mean'){
 
 #' imputeMatrix
 #' 
-#' Impute missing values by computing the mean or median across samples (rows)
+#' Impute missing values with the mean or median across samples (rows)
 #' for every feature (cols).
 #'
 #' @param mx  A numeric matrix as input.
@@ -124,10 +117,20 @@ impute <- function(v, method='mean'){
 #' @return Imputed matrix
 #' @export
 #'
-#' @examples
 imputeMatrix <- function(mx, method='mean'){
-   message(paste0("Imputing matrix with method: ", method))
-   mx.imputed <- apply(mx, 2, impute, method = method)
+    if(!is.matrix(mx)) {
+      stop('Expected a matrix as input...')
+    }
+    if (length(rownames(mx)) == 0) {
+      stop('Row names are missing...')
+    }
+    if (length(colnames(mx)) == 0) {
+    stop('Column names are missing...')
+    }
+    rnames <- rownames(mx)
+    message(paste0("Imputing matrix with method: ", method))
+    mx.imputed <- apply(mx, 2, impute, method = method)
+    row.names(mx.imputed) <- rnames
    return(mx.imputed)
 }
 
@@ -140,7 +143,6 @@ imputeMatrix <- function(mx, method='mean'){
 #' @return Filtered matrix with features (col) passing the max missing rate threshold removed.
 #' @export
 #'
-#' @examples
 filterMissingnessRate <- function(mx, max_missing_rate=0.25){
   if(!is.matrix(mx)) {
     stop('Expected a matrix as input...')

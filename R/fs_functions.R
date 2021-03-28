@@ -193,7 +193,6 @@ filter.pca <- function(features, center = TRUE, scale = TRUE, cum.var.cutoff = 1
 }
 
 
-## wrapper rfeRF
 
 #' rfeRF
 #'
@@ -203,37 +202,18 @@ filter.pca <- function(features, center = TRUE, scale = TRUE, cum.var.cutoff = 1
 #' @param class Response variable as numeric vector. It will be coerced to factor.
 #' @param number.cv Number of cross-validation folds (10 default). Used during training phase.
 #' @param group.sizes  A numeric vector of integers corresponding to the number of features that should be retained.
+#' @param metric Metric to evaluate performance ('Accuracy' (default), 'Kappa' or 'ROC').
+#' @param tolerance Allow tolerance for evaluation metric (Default zero).
+#' @param verbose Make the output verbose. 
 #'
 #' @return A list the elements. See \code{\link[caret]{rfe}} for more details.
 #'
 #'
 #' @export
-
-
-rfeRF.old <- function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15,100,5))) {
-
-  # Matrix input validation
-  valid.matrix(mx = features)
-
-  if(!is.vector(class) & (nrow(features) != length(class))){
-    stop('Error processing input data...')
-  }
-
-  #### recursive feature elimination-random forest
-  rfProfile <- caret::rfe(x = features,
-                          y = as.factor(class),
-                          maximize = TRUE,
-                          metric = 'Accuracy',
-                          sizes = group.sizes,
-                          rfeControl = caret::rfeControl(functions = caret::rfFuncs,
-                                                         method = "cv",
-                                                         number = number.cv,
-                                                         verbose = FALSE))
-
-  return(rfProfile) # return RF profile
-}
-                                              
-rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), metric = "Accuracy", verbose = TRUE, tolerance = 0) {
+#' 
+rfeRF = function(features, class, number.cv = 10, 
+                 group.sizes = c(1:10, seq(15, 100, 5)), 
+                 metric = "Accuracy", verbose = TRUE, tolerance = 0) {
     
     # Matrix input validation
     valid.matrix(mx = features)
@@ -303,6 +283,7 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
 #' @param number.cv See \code{\link{rfeRF}} for description.
 #' @param group.sizes See \code{\link{rfeRF}} for description.
 #' @param metric Metric to evaluate performance ('Accuracy' (default), 'Kappa' or 'ROC').
+#' @param tolerance Allow tolerance for evaluation metric (Default zero).
 #' @param verbose Make the output verbose. 
 #'
 #' @param extfolds Number of times (default 10) to repeat the entire FS process randomizing the dataset (test/training).
@@ -318,8 +299,7 @@ rfeRF = function(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 
 #'
 #'
 #' @export
-
-                       
+#' 
 combineFS = function(features, class, univariate = "corr", mincorr = 0.3, 
                      n.percent = 0.75, zero.gain.out = TRUE, multivariate = "mcorr", 
                      maxcorr = 0.75, cum.var.cutoff = 1, wrapper = "rfe.rf", 
@@ -496,5 +476,3 @@ rfFuncs2$rank <- function(object, x, y) {
 }
 
   
-                       
-

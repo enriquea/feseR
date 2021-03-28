@@ -122,14 +122,15 @@ plot_corr <- function(features, corr.method = 'pearson') {
 #'
 #' This function allows to plot different ggplot charts in the same grid.
 #'
-#' @param plotlists this param allow iterate thorugth a set of plots to
+#' @param plotlist list of ggplot objects
 #' @param file if the user wants to plot to a file, it can use the file paramterer
 #' @param cols Number of columns to be use.
 #' @param layout the layout to be use
+#' 
+multiplot <- function(plotlist = NULL, file, cols = 1, layout = NULL) {
 
-multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
-
-  plots <- c(list(...), plotlist)
+  # plots <- c(list(...), plotlist)
+  plots <- plotlist
   numPlots = length(plots)
 
   if (is.null(layout)) {
