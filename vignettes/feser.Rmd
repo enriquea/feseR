@@ -1,11 +1,12 @@
 ---
-title: "feseR: Combining efficiently multiple feature selection methods in a R-workflow"
+title: 'feseR: Combining efficiently multiple feature selection methods in a R-workflow'
 author: "Enrique Audain and Yasset Perez-Riverol"
 date: "`Octuber 2017`"
 output:
-  pdf_document: default
-  # html_document: default
+  html_document:
+    df_print: paged
   fig_caption: yes
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -20,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-feseR provides funcionalities to combine multiple Feature Selection (FS) methods to analyze high-dimensional omics data in R environment. The different feature selection steps can be classificated in: Univariate (Correlation filter and Gain Information), Multivariate (Principal Component Analysis and Matrix Correlation based) and Recursive Feature Elimination (wrapped up with a Machine Learning algorithm). The goal is to assemble the different steps in a efficient workflow to perform feature selection task in the context of classification and regression problems. The package includes also several example dataset.
+feseR provides funcionalities to combine multiple Feature Selection (FS) methods to analyze high-dimensional omics data in R environment. The different feature selection steps can be classificated in: Univariate (Correlation filter and Gain Information), Multivariate (Principal Component Analysis and Matrix Correlation based) and Recursive Feature Elimination (wrapped up with a Machine Learning algorithm). The goal is to assemble the different steps in an efficient workflow to perform feature selection task in the context of classification and regression problems. The package includes also several example dataset.
 
 ## Available dataset
 
@@ -30,8 +31,9 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
 * GSE5325 (Analysis of breast cancer tumor samples using 2-color cDNA microarrays)
 * GSE48760 (Transcriptomics analysis of left ventricles of mouse subjected to an isoproterenol challenge)
 
-## Examples
+Note: Datasets are expected to be a matrix with features in columns and samples in rows.
 
+## Examples
 
 ### Preparing your data
 
@@ -47,10 +49,13 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
 
    # getting class variable (expected last column)
    class <- TNBC[,ncol(TNBC)]
-
-   # getting only those features (i.e. genes/proteins) 
-   # with expression values for all instances (samples)
-   features <- features[ , colSums(is.na(features)) == 0]
+   
+   # pre-filtering
+   # keep only features (cols) with maximal missing rate 0.25 across samples (rows)
+   features <- filterMissingnessRate(features, max_missing_rate = 0.25)
+   
+   # impute missing values
+   features <- imputeMatrix(features, method = "mean")
 
    # Scale data features. These transformations coerce the original predictors 
    # to have zero mean and standard deviation equal one.
@@ -58,8 +63,7 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
 
 ```
 
-
-### Univariate filters
+### Univariate filter examples
 
 ```{r}
   # filtering by correlation
@@ -70,13 +74,13 @@ We provide some example dataset (Transcriptomics and Proteomics) with the packag
 ```
 
 
-### Multivariate filters
+### Multivariate filter examples
 
 ```{r}
   # filtering by matrix correlation (cutoff 0.75)
   output <- filter.matrix.corr(features = features, maxcorr = 0.75)
   
-  # reducing data using PCA (return Principal Components holding 95% of variance)
+  # data dimension reduction using PCA (return only PCs explaining 95% of the variance)
   output <- filter.pca(features = features, cum.var.cutoff = .95)
 ```
 
@@ -93,8 +97,8 @@ This function allows to combine multiple feature selection methods in a workflow
                         univariate = 'corr', mincorr = 0.3,
                         multivariate = 'mcorr', maxcorr = 0.75,
                         wrapper = 'rfe.rf', number.cv = 10, 
-                        group.sizes = seq(1,100,5), 
-                        extfolds = 20)
+                        group.sizes = seq(1,100,10), 
+                        verbose = F, extfolds = 10)
 
 
    # getting the metrics from the training process
@@ -121,7 +125,7 @@ Results from the testing phase
 ```{r, results='asis', echo=FALSE}
    
    pander::pandoc.table(testing_results, digits = 4,  split.table = Inf,
-                       caption = 'Classification metrics from twenty class-balanced and randomized runs.')
+                       caption = 'Classification metrics from ten class-balanced and randomized runs.')
 
 ```
 
