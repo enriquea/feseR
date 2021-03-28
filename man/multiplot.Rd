@@ -4,16 +4,16 @@
 \alias{multiplot}
 \title{multiplot}
 \usage{
-multiplot(..., plotlist = NULL, file, cols = 1, layout = NULL)
+multiplot(plotlist = NULL, file, cols = 1, layout = NULL)
 }
 \arguments{
+\item{plotlist}{list of ggplot objects}
+
 \item{file}{if the user wants to plot to a file, it can use the file paramterer}
 
 \item{cols}{Number of columns to be use.}
 
 \item{layout}{the layout to be use}
-
-\item{plotlists}{this param allow iterate thorugth a set of plots to}
 }
 \description{
 This function allows to plot different ggplot charts in the same grid.
