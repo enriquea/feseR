@@ -3,10 +3,10 @@ title: 'feseR: Combining efficiently multiple feature selection methods in a R-w
 author: "Enrique Audain and Yasset Perez-Riverol"
 date: "`Octuber 2017`"
 output:
+  pdf_document: default
+  fig_caption: yes
   html_document:
     df_print: paged
-  fig_caption: yes
-  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
