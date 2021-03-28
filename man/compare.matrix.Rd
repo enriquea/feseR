@@ -4,15 +4,18 @@
 \alias{compare.matrix}
 \title{compare.matrix}
 \usage{
-compare.matrix(input.matrix, output.matrix,
-  description = "Number of removed features:")
+compare.matrix(
+  input.matrix,
+  output.matrix,
+  description = "Percent of removed features:"
+)
 }
 \arguments{
 \item{input.matrix}{A numeric matrix as input.}
 
 \item{output.matrix}{A numeric matrix as input.}
 
-\item{description}{A brief description to print out.}
+\item{description}{Short description summarizing this action.}
 }
 \value{
 A message object.

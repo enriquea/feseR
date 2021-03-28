@@ -4,8 +4,15 @@
 \alias{rfeRF}
 \title{rfeRF}
 \usage{
-rfeRF(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 100,
-  5)))
+rfeRF(
+  features,
+  class,
+  number.cv = 10,
+  group.sizes = c(1:10, seq(15, 100, 5)),
+  metric = "Accuracy",
+  verbose = TRUE,
+  tolerance = 0
+)
 }
 \arguments{
 \item{features}{A numeric matrix as input.}
@@ -15,6 +22,12 @@ rfeRF(features, class, number.cv = 10, group.sizes = c(1:10, seq(15, 100,
 \item{number.cv}{Number of cross-validation folds (10 default). Used during training phase.}
 
 \item{group.sizes}{A numeric vector of integers corresponding to the number of features that should be retained.}
+
+\item{metric}{Metric to evaluate performance ('Accuracy' (default), 'Kappa' or 'ROC').}
+
+\item{verbose}{Make the output verbose.}
+
+\item{tolerance}{Allow tolerance for evaluation metric (Default zero).}
 }
 \value{
 A list the elements. See \code{\link[caret]{rfe}} for more details.

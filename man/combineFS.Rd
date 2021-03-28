@@ -4,18 +4,32 @@
 \alias{combineFS}
 \title{combineFS}
 \usage{
-combineFS(features, class, univariate = "corr", mincorr = 0.3,
-  n.percent = 0.75, zero.gain.out = TRUE, multivariate = "mcorr",
-  maxcorr = 0.75, cum.var.cutoff = 1, wrapper = "rfe.rf",
-  number.cv = 10, group.sizes = c(1:10, seq(15, 100, 5)), extfolds = 10,
-  partition = 2/3)
+combineFS(
+  features,
+  class,
+  univariate = "corr",
+  mincorr = 0.3,
+  n.percent = 0.75,
+  zero.gain.out = TRUE,
+  multivariate = "mcorr",
+  maxcorr = 0.75,
+  cum.var.cutoff = 1,
+  wrapper = "rfe.rf",
+  number.cv = 10,
+  group.sizes = c(1:10, seq(15, 100, 5)),
+  extfolds = 10,
+  partition = 2/3,
+  metric = "Accuracy",
+  tolerance = 0,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{features}{A numeric matrix as input.}
 
 \item{class}{Response variable as numeric vector. It will be coerced to factor.}
 
-\item{univariate}{Descrition of the Univariate filter to be used. Set 'corr' (default) for correlation filter or 'gain' for gain information.}
+\item{univariate}{Descrition of the Univariate filter to be used. Set 'corr' (default) for correlation filter, 'gain' for gain information or none.}
 
 \item{mincorr}{The threshold controling the Univariate correlation filter.}
 
@@ -23,7 +37,7 @@ combineFS(features, class, univariate = "corr", mincorr = 0.3,
 
 \item{zero.gain.out}{Is TRUE (default), zero-gain features will be filtered out (n.percent will be ignored).}
 
-\item{multivariate}{Multivariate filter to be used. Set 'mcorr' (default) for correlation filter or 'pca' for Principal Component Analysis.}
+\item{multivariate}{Multivariate filter to be used. Set 'mcorr' (default) for correlation filter, 'pca' for Principal Component Analysis or none.}
 
 \item{maxcorr}{The threshold controling the matrix correlation filter (default value 0.75).}
 
@@ -38,6 +52,12 @@ combineFS(features, class, univariate = "corr", mincorr = 0.3,
 \item{extfolds}{Number of times (default 10) to repeat the entire FS process randomizing the dataset (test/training).}
 
 \item{partition}{Parameter controling the data partition in test and training dataset. It generates random and class-balanced dataset.}
+
+\item{metric}{Metric to evaluate performance ('Accuracy' (default), 'Kappa' or 'ROC').}
+
+\item{tolerance}{Allow tolerance for evaluation metric (Default zero).}
+
+\item{verbose}{Make the output verbose.}
 }
 \value{
 A list with the following elements.
