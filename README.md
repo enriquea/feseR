@@ -1,9 +1,6 @@
-
-[![Travis build status](https://travis-ci.org/enriquea/feseR.svg?branch=master)](https://travis-ci.org/enriquea/feseR)
-
+[![R-CMD-check](https://github.com/enriquea/feseR/actions/workflows/r.yml/badge.svg){width="151"}](https://github.com/enriquea/feseR/actions/workflows/r.yml)
 
 # feseR: Feature Selection in R
-
 
 ## Introduction
 
@@ -11,16 +8,19 @@ We provide here a R package which combine multiple Feature Selection (FS) method
 
 ## How to install
 
-The first step is to install `devtools`:  
+The first step is to install `devtools`:
 
-    install.packages("devtools")
-    library(devtools)
-   
-Then, we can install the package using: 
+```         
+install.packages("devtools")
+library(devtools)
+```
 
-    install_github("enriquea/feseR")
-    library(feseR)
+Then, we can install the package using:
 
+```         
+install_github("enriquea/feseR")
+library(feseR)
+```
 
 ## How to use
 
@@ -32,8 +32,7 @@ Enrique Audain, Yassel Ramos, Henning Hermjakob, Darren R. Flower, Yasset Perez-
 
 ## How to cite
 
-If you find useful this tool in your work, you could want citing us:
-Perez-Riverol Y, Kuhn M, Vizcaíno JA, Hitz M-P, Audain E (2017) Accurate and fast feature selection workflow for high-dimensional omics data. PLoS ONE 12(12): e0189875. https://doi.org/10.1371/journal.pone.0189875
+If you find useful this tool in your work, you could want citing us: Perez-Riverol Y, Kuhn M, Vizcaíno JA, Hitz M-P, Audain E (2017) Accurate and fast feature selection workflow for high-dimensional omics data. PLoS ONE 12(12): e0189875. <https://doi.org/10.1371/journal.pone.0189875>
 
 ## Mainteiner
 
