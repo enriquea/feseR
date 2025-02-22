@@ -30,7 +30,7 @@ Suggests:
     pander
 Depends: R (>= 2.10)
 LazyData: TRUE
-LazyDataCompression: TRUE
+LazyDataCompression: gzip
 URL: http://github.com/enriquea/feseR
 BugReports: http://github.com/enriquea/feseR/issues
 VignetteBuilder: knitr
