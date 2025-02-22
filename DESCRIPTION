@@ -26,6 +26,7 @@ Suggests:
     testthat,
     knitr,
     markdown,
+    rmarkdown,
     pander
 Depends: R (>= 2.10)
 LazyData: TRUE

@@ -35,6 +35,14 @@ jobs:
           extra-packages: rcmdcheck
 
       - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: c("--no-manual", "--as-cran")
+          build_args: "--no-manual"
+          error-on: "error"
+          check-dir: "check"
+          working-directory: .
+          upload-snapshots: false
+          upload-results: false
       
       - name: Show testthat output
         if: always()
