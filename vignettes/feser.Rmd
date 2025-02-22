@@ -1,13 +1,17 @@
 ---
-title: 'feseR: Combining efficiently multiple feature selection methods in a R-workflow'
+title: "feseR: Combining efficiently multiple feature selection methods in a R-workflow"
 author: "Enrique Audain and Yasset Perez-Riverol"
-date: "`Octuber 2017`"
+date: "October 2017"
 output:
-  pdf_document: default
-  fig_caption: yes
-  html_document:
+  rmarkdown::html_vignette:
     df_print: paged
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{feseR Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
