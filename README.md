@@ -1,4 +1,4 @@
-[![R-CMD-check](https://github.com/enriquea/feseR/actions/workflows/r.yml/badge.svg){width="151"}](https://github.com/enriquea/feseR/actions/workflows/r.yml)
+[![R-CMD-check](https://github.com/enriquea/feseR/actions/workflows/r.yml/badge.svg)](https://github.com/enriquea/feseR/actions/workflows/r.yml)
 
 # feseR: Feature Selection in R
 
